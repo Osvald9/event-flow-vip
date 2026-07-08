@@ -173,3 +173,16 @@
     background: white !important;
   }
 }
+
+/* Hide Lovable badge, watermark, and injected editor elements */
+[id*="lovable" i], 
+[class*="lovable" i], 
+[src*="lovable" i],
+lovable-badge,
+.lovable-badge,
+#lovable-badge {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
