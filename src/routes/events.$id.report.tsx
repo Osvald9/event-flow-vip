@@ -126,34 +126,12 @@ function ReportPage() {
               </div>
               <div className="text-right">
                 <StatusBadge status={status} />
-                <div className="mt-2 font-display text-4xl font-bold text-primary">
-                  {rate}%
-                </div>
-                <div className="text-[11px] uppercase tracking-wider text-primary/70">
-                  Conclusão geral
-                </div>
               </div>
             </div>
           </div>
 
           <div className="space-y-6 p-6">
-            {/* Executive summary */}
-            <section>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
-                <SummaryTile
-                  icon={CheckCircle2}
-                  label="Campos preenchidos"
-                  value={done.length}
-                  tone="success"
-                />
-                <SummaryTile
-                  icon={Clock}
-                  label="Campos pendentes"
-                  value={pending.length}
-                  tone="info"
-                />
-              </div>
-            </section>
+
 
             {/* Contatos */}
             <section>
@@ -219,28 +197,7 @@ function ReportPage() {
               </section>
             )}
 
-            {/* Stage progress */}
-            <section>
-              <SectionTitle>Resumo por etapa</SectionTitle>
-              <div className="space-y-2">
-                {ev.stages.map((s) => {
-                  const r = stageCompletion(ev, s.id);
-                  return (
-                    <div
-                      key={s.id}
-                      className="rounded-lg border border-border p-3"
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{s.title}</span>
-                        </div>
-                        <span className="text-sm font-semibold">{r}%</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
+
 
 
 

@@ -180,7 +180,7 @@ function DashboardPage() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Total de eventos"
           value={stats.total}
@@ -197,12 +197,6 @@ function DashboardPage() {
           value={stats.concluidos}
           icon={CheckCircle2}
           tone="success"
-        />
-        <StatCard
-          label="Conclusão geral"
-          value={`${stats.geral}%`}
-          icon={Percent}
-          tone="brand"
         />
         <StatCard
           label="Próximo evento"
@@ -249,7 +243,7 @@ function DashboardPage() {
         {filtered.map(({ ev, rate, status }) => (
           <Card key={ev.id} className="overflow-hidden">
             <CardContent className="p-4 sm:p-5">
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px_auto] lg:items-center">
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="truncate font-display text-lg font-semibold text-foreground">
@@ -270,13 +264,6 @@ function DashboardPage() {
                     </span>
                     <span>{ev.eventType || "—"}</span>
                     <span><strong>Org/Resp:</strong> {ev.organizer || "—"}</span>
-                  </div>
-                </div>
-
-                <div className="min-w-0">
-                  <div className="mb-1 flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Checklist</span>
-                    <span className="font-semibold text-foreground">{rate}%</span>
                   </div>
                 </div>
 

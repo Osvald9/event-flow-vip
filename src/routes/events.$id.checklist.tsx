@@ -105,42 +105,34 @@ function ChecklistPage() {
       {/* Event header */}
       <Card className="overflow-hidden border-l-4 border-l-brand">
         <CardContent className="p-5">
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-center">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="truncate font-display text-2xl font-bold text-foreground">
-                  {ev.name}
-                </h1>
-                <StatusBadge status={status} />
-              </div>
-              <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                <span>{ev.location || "—"}</span>
-                <span>
-                  {ev.endDate && ev.endDate !== ev.date
-                    ? `${ev.date.split("-").reverse().join("/")} a ${ev.endDate.split("-").reverse().join("/")}`
-                    : ev.date.split("-").reverse().join("/")}
-                </span>
-                <span>{ev.eventType || "—"}</span>
-                <span>Organizador / Responsável: {ev.organizer || "—"}</span>
-              </div>
-              
-              {ev.mapImage && (
-                <div className="mt-3 flex items-start gap-2">
-                  <div className="text-xs">
-                    <span className="font-semibold block text-muted-foreground mb-1">Mapa do Stand:</span>
-                    <a href={ev.mapImage} target="_blank" rel="noreferrer" className="block hover:opacity-90">
-                      <img src={ev.mapImage} alt="Mapa do Stand" className="max-h-24 rounded object-contain border border-border" />
-                    </a>
-                  </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="truncate font-display text-2xl font-bold text-foreground">
+                {ev.name}
+              </h1>
+              <StatusBadge status={status} />
+            </div>
+            <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+              <span>{ev.location || "—"}</span>
+              <span>
+                {ev.endDate && ev.endDate !== ev.date
+                  ? `${ev.date.split("-").reverse().join("/")} a ${ev.endDate.split("-").reverse().join("/")}`
+                  : ev.date.split("-").reverse().join("/")}
+              </span>
+              <span>{ev.eventType || "—"}</span>
+              <span>Organizador / Responsável: {ev.organizer || "—"}</span>
+            </div>
+            
+            {ev.mapImage && (
+              <div className="mt-3 flex items-start gap-2">
+                <div className="text-xs">
+                  <span className="font-semibold block text-muted-foreground mb-1">Mapa do Stand:</span>
+                  <a href={ev.mapImage} target="_blank" rel="noreferrer" className="block hover:opacity-90">
+                    <img src={ev.mapImage} alt="Mapa do Stand" className="max-h-24 rounded object-contain border border-border" />
+                  </a>
                 </div>
-              )}
-            </div>
-            <div>
-              <div className="mb-1 flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Progresso geral</span>
-                <span className="font-semibold text-foreground">{rate}%</span>
               </div>
-            </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -161,14 +153,6 @@ function ChecklistPage() {
                       </p>
                     )}
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-40 text-right">
-                      <div className="mb-0.5 text-[11px] text-muted-foreground">
-                        <span>Progresso da etapa: </span>
-                        <span className="font-semibold text-foreground">{sRate}%</span>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </CardHeader>
               <CardContent>
@@ -182,11 +166,6 @@ function ChecklistPage() {
                         <AccordionTrigger className="hover:no-underline">
                           <div className="flex flex-1 items-center justify-between gap-3 pr-3">
                             <span className="text-sm font-medium">{group.title}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {group.id === "comercial_parceria"
-                                ? (ev.partnershipType ? "1 concluído" : "0 concluídos")
-                                : `${group.items.filter((i) => i.status === "concluido").length} concluídos`} · {gRate}%
-                            </span>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent>
