@@ -2,6 +2,7 @@ import { useSyncExternalStore } from "react";
 import { CHECKLIST_TEMPLATE } from "./checklist-template";
 import type { ChecklistItem, EventInfo, EventStatus, ItemStatus } from "./types";
 import { supabase } from "./supabase";
+import INITIAL_DATA from "./initial-events.json";
 
 const KEY = "conexao-vip-events-v1";
 
@@ -14,8 +15,31 @@ function notify() {
   listeners.forEach((l) => l());
 }
 
+function getLocalData(): EventInfo[] {
+  if (typeof window === "undefined") return INITIAL_DATA as EventInfo[];
+  try {
+    const rawLocal = window.localStorage.getItem(KEY);
+    if (rawLocal) {
+      const parsed = JSON.parse(rawLocal);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error("Erro ao ler localStorage:", e);
+  }
+  return INITIAL_DATA as EventInfo[];
+}
+
 function writeCache(next: EventInfo[]) {
   cache = next;
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify(next));
+    } catch (e) {
+      console.error("Erro ao salvar no localStorage:", e);
+    }
+  }
   notify();
 }
 
@@ -24,80 +48,53 @@ async function fetchAndSync() {
   isSyncing = true;
 
   try {
+    const currentLocal = getLocalData();
+
     // 1. Buscar dados do Supabase
-    const { data, error } = await supabase
+    const { data: dbData, error } = await supabase
       .from("events")
       .select("*")
       .order("createdAt", { ascending: false });
 
     if (error) {
       console.error("Erro ao buscar dados do Supabase:", error);
+      writeCache(currentLocal);
       isSyncing = false;
       return;
     }
 
-    const rawLocal = window.localStorage.getItem(KEY);
+    const dbEvents = dbData || [];
+    let combinedEvents = [...dbEvents];
 
-    // 2. Se houver dados locais no localStorage, migrar para o Supabase
-    if (rawLocal) {
-      try {
-        const localEvents = JSON.parse(rawLocal) as EventInfo[];
-        if (localEvents.length > 0) {
-          for (const localEv of localEvents) {
-            // Verificar se o evento já existe no Supabase para não duplicar
-            const exists = data?.some((dbEv) => dbEv.id === localEv.id);
-            if (!exists) {
-              const { error: insertError } = await supabase
-                .from("events")
-                .insert(localEv);
-              if (insertError) {
-                console.error(`Erro ao subir evento local ${localEv.name}:`, insertError);
-              } else {
-                console.log(`Evento local ${localEv.name} subido para a nuvem.`);
-              }
-            }
+    // Sincronizar todos os eventos locais que ainda não estejam no banco
+    for (const localEv of currentLocal) {
+      const exists = combinedEvents.some((dbEv) => dbEv.id === localEv.id);
+      if (!exists) {
+        combinedEvents.unshift(localEv);
+        // Subir o evento faltante para o Supabase sem bloquear a UI
+        supabase.from("events").insert(localEv).then(({ error: insertError }) => {
+          if (insertError) {
+            console.error(`Erro ao subir evento ${localEv.name} para o Supabase:`, insertError);
+          } else {
+            console.log(`Evento ${localEv.name} sincronizado com o Supabase com sucesso.`);
           }
-          // Limpar do localStorage após migração bem sucedida
-          window.localStorage.removeItem(KEY);
-
-          // Buscar dados atualizados
-          const { data: refreshedData } = await supabase
-            .from("events")
-            .select("*")
-            .order("createdAt", { ascending: false });
-          if (refreshedData) {
-            writeCache(refreshedData);
-            isSyncing = false;
-            return;
-          }
-        }
-      } catch (e) {
-        console.error("Erro ao processar dados locais do localStorage:", e);
+        });
       }
     }
 
-    // 3. Se o banco estiver completamente vazio, realizar o seed inicial no Supabase
-    if ((!data || data.length === 0) && !rawLocal) {
-      const seedEvents = seed();
-      for (const sEv of seedEvents) {
-        await supabase.from("events").insert(sEv);
-      }
-      const { data: seededData } = await supabase
-        .from("events")
-        .select("*")
-        .order("createdAt", { ascending: false });
-      if (seededData) {
-        writeCache(seededData);
-        isSyncing = false;
-        return;
+    // Se nem o banco nem o localStorage tiverem dados, subir INITIAL_DATA
+    if (combinedEvents.length === 0) {
+      const initial = INITIAL_DATA as EventInfo[];
+      combinedEvents = initial;
+      for (const sEv of initial) {
+        supabase.from("events").insert(sEv);
       }
     }
 
-    if (data) {
-      writeCache(data);
-    }
+    writeCache(combinedEvents);
   } catch (err) {
     console.error("Erro na sincronização:", err);
+    writeCache(getLocalData());
   } finally {
     isSyncing = false;
   }
@@ -122,9 +119,7 @@ if (typeof window !== "undefined") {
 
 function read(): EventInfo[] {
   if (cache) return cache;
-  if (typeof window === "undefined") return (cache = []);
-  // Retorna cache vazio inicialmente até a requisição do Supabase completar
-  return (cache = []);
+  return (cache = getLocalData());
 }
 
 function subscribe(l: Listener) {

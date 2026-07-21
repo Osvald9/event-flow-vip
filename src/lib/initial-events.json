@@ -1,0 +1,239 @@
+[
+  {
+    "id": "ev-mrcg8u2x",
+    "name": "Exponor",
+    "organizer": "",
+    "responsible": "",
+    "phone": "",
+    "whatsapp": "",
+    "email": "",
+    "location": "",
+    "date": "2026-08-13",
+    "endDate": "2026-08-16",
+    "setupTime": "08:00",
+    "setupDate": "2026-08-10",
+    "eventTime": "",
+    "teardownTime": "00:00",
+    "teardownDate": "2026-08-17",
+    "audience": "100000",
+    "eventType": "Exposição",
+    "mapLink": "",
+    "mapImage": "",
+    "days": "4",
+    "partnershipType": "Patrocínio Ouro",
+    "quotaValue": "999999999",
+    "createdAt": "2026-07-08T19:06:53.385Z",
+    "updatedAt": "2026-07-08T20:05:50.798Z",
+    "stages": [
+      {
+        "id": "comercial",
+        "title": "Etapa Comercial",
+        "description": "Definição de parceria, contrapartidas e contrato.",
+        "groups": [
+          {
+            "id": "comercial_parceria",
+            "title": "Definição da parceria",
+            "items": [
+              { "id": "comercial_parceria__patroc_nio_ouro", "label": "Patrocínio Ouro", "critical": false, "status": "pendente" },
+              { "id": "comercial_parceria__patroc_nio_prata", "label": "Patrocínio Prata", "critical": false, "status": "pendente" },
+              { "id": "comercial_parceria__patroc_nio_bronze", "label": "Patrocínio Bronze", "critical": false, "status": "pendente" },
+              { "id": "comercial_parceria__apoio", "label": "Apoio", "critical": false, "status": "pendente" },
+              { "id": "comercial_parceria__fornecedor_oficial_de_internet", "label": "Fornecedor Oficial de Internet", "critical": false, "status": "pendente" },
+              { "id": "comercial_parceria__venda_de_internet_tempor_ria", "label": "Venda de internet temporária", "critical": false, "status": "pendente" },
+              { "id": "comercial_parceria__permuta", "label": "Permuta", "critical": false, "status": "pendente" },
+              { "id": "comercial_parceria__contrato_financeiro", "label": "Contrato financeiro", "critical": true, "status": "pendente" }
+            ]
+          },
+          {
+            "id": "comercial_contrapartidas",
+            "title": "Contrapartidas negociadas",
+            "items": [
+              { "id": "comercial_contrapartidas__logo_em_banner", "label": "Logo em banner", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__logo_em_painel", "label": "Logo em painel", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__logo_em_tel_o", "label": "Logo em telão", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__logo_em_backdrop", "label": "Logo em backdrop", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__logo_em_ingressos", "label": "Logo em ingressos", "critical": false, "status": "na" },
+              { "id": "comercial_contrapartidas__logo_em_pulseiras", "label": "Logo em pulseiras", "critical": false, "status": "na" },
+              { "id": "comercial_contrapartidas__logo_em_credenciais", "label": "Logo em credenciais", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__logo_no_site", "label": "Logo no site", "critical": false, "status": "na" },
+              { "id": "comercial_contrapartidas__logo_nas_redes_sociais", "label": "Logo nas redes sociais", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__marca_o_nas_publica_es", "label": "Marcação nas publicações", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__stories", "label": "Stories", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__reels", "label": "Reels", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__v_deo_institucional", "label": "Vídeo institucional", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__cita_o_pelo_locutor", "label": "Citação pelo locutor", "critical": false, "status": "na" },
+              { "id": "comercial_contrapartidas__espa_o_para_ativa_o", "label": "Espaço para ativação", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__espa_o_para_stand", "label": "Espaço para stand", "critical": false, "status": "concluido" },
+              { "id": "comercial_contrapartidas__espa_o_para_venda", "label": "Espaço para venda", "critical": false, "status": "na" },
+              { "id": "comercial_contrapartidas__exclusividade_como_internet_oficial", "label": "Exclusividade como internet oficial", "critical": false, "status": "concluido" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "tecnico",
+        "title": "Levantamento Técnico",
+        "description": "Vistoria, definição de local e infraestrutura necessária.",
+        "groups": [
+          {
+            "id": "tec_local",
+            "title": "Local e infraestrutura",
+            "items": [
+              { "id": "tec_local__endere_o_confirmado", "label": "Endereço confirmado", "critical": true, "status": "concluido" },
+              { "id": "tec_local__visita_t_cnica_realizada", "label": "Visita técnica realizada", "critical": true, "status": "pendente" },
+              { "id": "tec_local__defini_o_do_local_do_stand_pelo_marketing", "label": "Definição do local do stand pelo marketing", "critical": false, "status": "concluido" },
+              { "id": "tec_local__defini_o_do_local_dos_equipamentos_pela_equipe_t_cnica", "label": "Definição do local dos equipamentos pela equipe técnica", "critical": false, "status": "pendente" },
+              { "id": "tec_local__ponto_de_energia_dispon_vel", "label": "Ponto de energia disponível", "critical": true, "status": "pendente" },
+              { "id": "tec_local__local_protegido_para_equipamentos", "label": "Local protegido para equipamentos", "critical": false, "status": "pendente" },
+              { "id": "tec_local__necessidades_levantadas", "label": "Necessidades levantadas", "critical": false, "status": "pendente" },
+              { "id": "tec_local__local_para_guardar_itens_do_evento_depois_que_acabar", "label": "Local para guardar itens do evento depois que acabar", "critical": false, "status": "concluido" }
+            ]
+          },
+          {
+            "id": "tec_internet",
+            "title": "Necessidade de internet",
+            "items": [
+              { "id": "tec_internet__bilheteria", "label": "Bilheteria", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__caixa", "label": "Caixa", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__m_quinas_de_cart_o", "label": "Máquinas de cartão", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__credenciamento", "label": "Credenciamento", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__transmiss_o_ao_vivo", "label": "Transmissão ao vivo", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__equipamento_cabeado_informar_quais_nas_observa_es_", "label": "Equipamento cabeado (informar quais nas observações)", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__imprensa", "label": "Imprensa", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__camarim", "label": "Camarim", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__produ_o", "label": "Produção", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__seguran_a", "label": "Segurança", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__staff", "label": "Staff", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__expositores", "label": "Expositores", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__p_blico", "label": "Público", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__streaming", "label": "Streaming", "critical": false, "status": "pendente" },
+              { "id": "tec_internet__monitoramento_por_c_meras", "label": "Monitoramento por câmeras", "critical": false, "status": "pendente" }
+            ]
+          },
+          {
+            "id": "tec_banda",
+            "title": "Banda necessária",
+            "items": [
+              { "id": "tec_banda__at_100_mbps", "label": "Até 100 Mbps", "critical": false, "status": "pendente" },
+              { "id": "tec_banda__300_mbps", "label": "300 Mbps", "critical": false, "status": "pendente" },
+              { "id": "tec_banda__500_mbps", "label": "500 Mbps", "critical": false, "status": "pendente" },
+              { "id": "tec_banda__700_mbps", "label": "700 Mbps", "critical": false, "status": "pendente" },
+              { "id": "tec_banda__1_gbps", "label": "1 Gbps", "critical": false, "status": "pendente" },
+              { "id": "tec_banda__link_dedicado", "label": "Link dedicado", "critical": true, "status": "pendente" },
+              { "id": "tec_banda__link_redundante", "label": "Link redundante", "critical": false, "status": "pendente" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "instalacao",
+        "title": "Instalação",
+        "description": "Agendamento, equipe, materiais e testes pré-evento.",
+        "groups": [
+          {
+            "id": "inst_geral",
+            "title": "Preparação e instalação",
+            "items": [
+              { "id": "inst_geral__data_agendada", "label": "Data agendada", "critical": true, "status": "concluido" },
+              { "id": "inst_geral__equipe_de_trabalho_definida", "label": "Equipe de trabalho definida", "critical": true, "status": "pendente" },
+              { "id": "inst_geral__ve_culo_dispon_vel", "label": "Veículo disponível", "critical": false, "status": "pendente" },
+              { "id": "inst_geral__materiais_conferidos", "label": "Materiais conferidos", "critical": false, "status": "pendente" },
+              { "id": "inst_geral__equipamentos_configurados", "label": "Equipamentos configurados", "critical": false, "status": "pendente" },
+              { "id": "inst_geral__teste_de_internet_realizado_com_respons_vel_5h_antes_", "label": "Teste de internet realizado com responsável (5h antes)", "critical": true, "status": "pendente" },
+              { "id": "inst_geral__instala_o_de_tenda_bal_o_balc_o_ou_outros_itens", "label": "Instalação de tenda, balão, balcão ou outros itens", "critical": false, "status": "pendente" },
+              { "id": "inst_geral__fotos_da_instala_o", "label": "Fotos da instalação", "critical": false, "status": "pendente" },
+              { "id": "inst_geral__assinatura_do_respons_vel", "label": "Assinatura do responsável", "critical": true, "status": "pendente" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "operacao",
+        "title": "Operação durante o evento",
+        "description": "Presença técnica, marketing, materiais, equipe e registros.",
+        "groups": [
+          {
+            "id": "op_geral",
+            "title": "Operação técnica",
+            "items": [
+              { "id": "op_geral__t_cnico_de_plant_o", "label": "Técnico de plantão", "critical": true, "status": "pendente" },
+              { "id": "op_geral__canal_direto_com_produ_o", "label": "Canal direto com produção", "critical": true, "status": "pendente" }
+            ]
+          },
+          {
+            "id": "op_stand",
+            "title": "Ações de marketing — Stand",
+            "items": [
+              { "id": "op_stand__wind_banner", "label": "Wind Banner", "critical": false, "status": "pendente" },
+              { "id": "op_stand__balc_o", "label": "Balcão", "critical": false, "status": "concluido" },
+              { "id": "op_stand__totem", "label": "Totem", "critical": false, "status": "concluido" },
+              { "id": "op_stand__roleta", "label": "Roleta", "critical": false, "status": "pendente" },
+              { "id": "op_stand__tablet", "label": "Tablet", "critical": false, "status": "concluido" },
+              { "id": "op_stand__cadeiras", "label": "Cadeiras", "critical": false, "status": "pendente" },
+              { "id": "op_stand__tenda", "label": "Tenda", "critical": false, "status": "pendente" },
+              { "id": "op_stand__ilumina_o", "label": "Iluminação", "critical": false, "status": "pendente" },
+              { "id": "op_stand__extens_o", "label": "Extensão", "critical": false, "status": "concluido" },
+              { "id": "op_stand__bal_o", "label": "Balão", "critical": false, "status": "pendente" }
+            ]
+          },
+          {
+            "id": "op_materiais",
+            "title": "Materiais",
+            "items": [
+              { "id": "op_materiais__panfletos", "label": "Panfletos", "critical": false, "status": "concluido" },
+              { "id": "op_materiais__flyers", "label": "Flyers", "critical": false, "status": "concluido" },
+              { "id": "op_materiais__qr_codes", "label": "QR Codes", "critical": false, "status": "pendente" },
+              { "id": "op_materiais__brindes", "label": "Brindes", "critical": false, "status": "concluido" },
+              { "id": "op_materiais__camisas_de_trabalho", "label": "Camisas de trabalho", "critical": false, "status": "concluido" }
+            ]
+          },
+          {
+            "id": "op_equipe",
+            "title": "Equipe",
+            "items": [
+              { "id": "op_equipe__supervisor", "label": "Supervisor", "critical": false, "status": "pendente" },
+              { "id": "op_equipe__comercial", "label": "Comercial", "critical": false, "status": "pendente" },
+              { "id": "op_equipe__marketing", "label": "Marketing", "critical": false, "status": "pendente" },
+              { "id": "op_equipe__t_cnico", "label": "Técnico", "critical": false, "status": "pendente" },
+              { "id": "op_equipe__atendimento", "label": "Atendimento", "critical": false, "status": "pendente" },
+              { "id": "op_equipe__fot_grafo", "label": "Fotógrafo", "critical": false, "status": "pendente" },
+              { "id": "op_equipe__apoio", "label": "Apoio", "critical": false, "status": "pendente" }
+            ]
+          },
+          {
+            "id": "op_registros",
+            "title": "Registros",
+            "items": [
+              { "id": "op_registros__fotos_do_stand", "label": "Fotos do stand", "critical": false, "status": "pendente" },
+              { "id": "op_registros__fotos_da_equipe", "label": "Fotos da equipe", "critical": false, "status": "pendente" },
+              { "id": "op_registros__fotos_dos_clientes", "label": "Fotos dos clientes", "critical": false, "status": "pendente" },
+              { "id": "op_registros__v_deos", "label": "Vídeos", "critical": false, "status": "pendente" },
+              { "id": "op_registros__depoimentos", "label": "Depoimentos", "critical": false, "status": "pendente" },
+              { "id": "op_registros__bastidores", "label": "Bastidores", "critical": false, "status": "pendente" },
+              { "id": "op_registros__reels_gravados", "label": "Reels gravados", "critical": false, "status": "pendente" },
+              { "id": "op_registros__stories_publicados", "label": "Stories publicados", "critical": false, "status": "pendente" }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "pos",
+        "title": "Pós-evento",
+        "description": "Encerramento, conferência e aprendizados.",
+        "groups": [
+          {
+            "id": "pos_geral",
+            "title": "Fechamento",
+            "items": [
+              { "id": "pos_geral__retirada_dos_equipamentos", "label": "Retirada dos equipamentos", "critical": true, "status": "pendente" },
+              { "id": "pos_geral__confer_ncia_dos_materiais", "label": "Conferência dos materiais", "critical": false, "status": "pendente" },
+              { "id": "pos_geral__devolu_o_de_itens_de_evento_e_brindes_ao_estoque", "label": "Devolução de itens de evento e brindes ao estoque", "critical": false, "status": "pendente" },
+              { "id": "pos_geral__oportunidades_de_melhoria", "label": "Oportunidades de melhoria", "critical": false, "status": "pendente" },
+              { "id": "pos_geral__arquivamento_de_fotos_e_documentos", "label": "Arquivamento de fotos e documentos", "critical": false, "status": "pendente" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
