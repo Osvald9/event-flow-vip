@@ -404,32 +404,27 @@ function StageSection({
             ? group.items.filter((i) => i.status === "concluido")
             : group.items.filter((i) => i.status !== "na");
 
+          if (group.id === "op_registros" && group.items.filter((i) => i.attachment).length === 0 && !group.notes) {
+            return null;
+          }
           if (isInternetOrBanda && activeItems.length === 0 && !group.notes) {
             return null;
           }
-          if (!isInternetOrBanda && activeItems.length === 0) return null;
+          if (!isInternetOrBanda && group.id !== "op_registros" && activeItems.length === 0) return null;
 
           return (
             <div key={group.id} className="rounded-lg border border-border p-3 space-y-2 bg-muted/10">
               <h4 className="text-xs font-bold text-foreground/80 uppercase tracking-wide">{group.title}</h4>
               {group.id === "op_registros" ? (
-                <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mt-2">
-                  {activeItems.map((it) => (
-                    <div key={it.id} className="border border-border/60 rounded-lg p-2 bg-card flex flex-col justify-between space-y-2">
-                      <div className="text-[11px] font-medium leading-tight text-foreground/80 break-words line-clamp-2">
-                        {it.label}
-                      </div>
-                      {it.attachment ? (
-                        <div className="aspect-video w-full rounded border border-border/80 overflow-hidden bg-muted">
-                          <img src={it.attachment} alt={it.label} className="w-full h-full object-cover" />
-                        </div>
-                      ) : (
-                        <div className="aspect-video w-full rounded border border-border flex items-center justify-center bg-muted text-[10px] text-muted-foreground font-semibold">
-                          Sem foto
-                        </div>
-                      )}
+                <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-2">
+                  {group.items.filter((it) => it.attachment).map((it) => (
+                    <div key={it.id} className="aspect-video w-full rounded-lg border border-border/80 overflow-hidden bg-muted shadow-sm">
+                      <img src={it.attachment} alt="Registro do evento" className="w-full h-full object-cover" />
                     </div>
                   ))}
+                  {group.items.filter((it) => it.attachment).length === 0 && (
+                    <span className="text-xs text-muted-foreground italic col-span-full">Nenhuma foto enviada.</span>
+                  )}
                 </div>
               ) : isInternetOrBanda ? (
                 <div className="flex flex-wrap gap-1.5 my-1">

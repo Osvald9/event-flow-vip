@@ -53,6 +53,7 @@ import {
   updateGroupNotes,
   addItemToGroup,
   removeItemFromGroup,
+  addPhotoToGroup,
   useEvent,
 } from "@/lib/events-store";
 import type { ChecklistItem, ItemStatus } from "@/lib/types";
@@ -246,89 +247,7 @@ function ChecklistPage() {
                               </div>
                             </div>
                           ) : group.id === "op_registros" ? (
-                            <div className="space-y-4 p-3 bg-muted/20 border border-border rounded-lg">
-                              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
-                                {group.items.map((it) => {
-                                  const isDone = it.status === "concluido";
-                                  return (
-                                    <div key={it.id} className={`border rounded-lg p-3 bg-card space-y-2.5 flex flex-col justify-between transition-colors ${
-                                      isDone ? "bg-success/5 border-success/30" : "border-border"
-                                    }`}>
-                                      <div className="flex items-start gap-2 min-w-0">
-                                        <Checkbox
-                                          id={it.id}
-                                          checked={isDone}
-                                          onCheckedChange={(checked) =>
-                                            updateItem(ev.id, it.id, {
-                                              status: checked ? "concluido" : "pendente",
-                                            })
-                                          }
-                                          className="mt-0.5"
-                                        />
-                                        <Label htmlFor={it.id} className="text-xs font-semibold leading-tight cursor-pointer break-words flex-1">
-                                          {it.label}
-                                        </Label>
-                                      </div>
-                                      <div className="pt-1">
-                                        {it.attachment ? (
-                                          <div className="relative group w-full aspect-video border border-border rounded overflow-hidden bg-muted">
-                                            <img src={it.attachment} alt={it.label} className="w-full h-full object-cover" />
-                                            <button
-                                              type="button"
-                                              onClick={() => updateItem(ev.id, it.id, { attachment: "", status: "pendente" })}
-                                              className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full shadow hover:bg-destructive/80 transition-colors"
-                                            >
-                                              <Trash2 className="h-3 w-3" />
-                                            </button>
-                                          </div>
-                                        ) : (
-                                          <div>
-                                            <label className="cursor-pointer inline-flex w-full items-center justify-center gap-1.5 rounded border border-input bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm hover:bg-accent hover:text-accent-foreground select-none transition-colors">
-                                              <Upload className="h-3.5 w-3.5" />
-                                              <span>Enviar foto</span>
-                                              <input
-                                                type="file"
-                                                accept="image/*"
-                                                className="hidden"
-                                                onChange={(e) => {
-                                                  const file = e.target.files?.[0];
-                                                  if (file) {
-                                                    const reader = new FileReader();
-                                                    reader.onload = (event) => {
-                                                      if (event.target?.result) {
-                                                        updateItem(ev.id, it.id, {
-                                                          attachment: event.target.result as string,
-                                                          status: "concluido"
-                                                        });
-                                                        toast.success("Foto anexada com sucesso.");
-                                                      }
-                                                    };
-                                                    reader.readAsDataURL(file);
-                                                  }
-                                                }}
-                                              />
-                                            </label>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                              <div className="pt-3 border-t border-border">
-                                <Label htmlFor={`notes-${group.id}`} className="text-xs font-semibold mb-1.5 block text-foreground">
-                                  Observações do grupo
-                                </Label>
-                                <Textarea
-                                  id={`notes-${group.id}`}
-                                  placeholder={`Observações gerais sobre ${group.title.toLowerCase()}...`}
-                                  value={group.notes || ""}
-                                  onChange={(e) => updateGroupNotes(ev.id, group.id, e.target.value)}
-                                  className="bg-card text-xs"
-                                  rows={2}
-                                />
-                              </div>
-                            </div>
+                            <RegistrosGroupSection eventId={ev.id} group={group} />
                           ) : group.id === "op_equipe" ? (
                             <TeamGroupSection eventId={ev.id} group={group} />
                           ) : (
@@ -482,6 +401,97 @@ function ItemRow({ eventId, item }: { eventId: string; item: ChecklistItem }) {
             />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function RegistrosGroupSection({
+  eventId,
+  group,
+}: {
+  eventId: string;
+  group: { id: string; title: string; items: ChecklistItem[]; notes?: string };
+}) {
+  return (
+    <div className="space-y-4 p-3 bg-muted/20 border border-border rounded-lg">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <Label className="text-xs font-semibold block text-foreground">
+            Fotos e registros do evento ({group.items.length})
+          </Label>
+          <p className="text-[11px] text-muted-foreground">
+            Faça upload das fotos da operação, equipe e stand.
+          </p>
+        </div>
+        <label className="cursor-pointer inline-flex items-center gap-1.5 rounded border border-primary/30 bg-primary/10 text-primary px-3 py-1.5 text-xs font-semibold shadow-sm hover:bg-primary/20 select-none transition-colors">
+          <Upload className="h-4 w-4" />
+          <span>Upload de foto</span>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              const files = e.target.files;
+              if (!files || files.length === 0) return;
+              Array.from(files).forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                  if (event.target?.result) {
+                    addPhotoToGroup(eventId, group.id, event.target.result as string);
+                  }
+                };
+                reader.readAsDataURL(file);
+              });
+              toast.success("Foto(s) adicionada(s).");
+            }}
+          />
+        </label>
+      </div>
+
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 pt-1">
+        {group.items.map((it) => (
+          <div key={it.id} className="relative group aspect-video rounded-lg border border-border overflow-hidden bg-muted shadow-sm">
+            {it.attachment ? (
+              <img src={it.attachment} alt="Registro" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground p-2 text-center">
+                Sem imagem
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                removeItemFromGroup(eventId, it.id);
+                toast.success("Foto removida.");
+              }}
+              className="absolute top-1.5 right-1.5 bg-destructive text-white p-1 rounded-full shadow hover:bg-destructive/80 transition-colors"
+              title="Remover foto"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ))}
+        {group.items.length === 0 && (
+          <div className="col-span-full py-8 text-center text-xs text-muted-foreground italic border border-dashed border-border/80 rounded-lg bg-card/50">
+            Nenhuma foto enviada ainda. Clique no botão de upload acima para adicionar registros do evento.
+          </div>
+        )}
+      </div>
+
+      <div className="pt-3 border-t border-border">
+        <Label htmlFor={`notes-${group.id}`} className="text-xs font-semibold mb-1.5 block text-foreground">
+          Observações dos registros
+        </Label>
+        <Textarea
+          id={`notes-${group.id}`}
+          placeholder="Observações adicionais sobre fotos ou registros..."
+          value={group.notes || ""}
+          onChange={(e) => updateGroupNotes(eventId, group.id, e.target.value)}
+          className="bg-card text-xs"
+          rows={2}
+        />
       </div>
     </div>
   );

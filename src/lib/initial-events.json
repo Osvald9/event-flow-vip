@@ -195,16 +195,7 @@
           {
             "id": "op_registros",
             "title": "Registros",
-            "items": [
-              { "id": "op_registros__fotos_do_stand", "label": "Fotos do stand", "critical": false, "status": "pendente" },
-              { "id": "op_registros__fotos_da_equipe", "label": "Fotos da equipe", "critical": false, "status": "pendente" },
-              { "id": "op_registros__fotos_dos_clientes", "label": "Fotos dos clientes", "critical": false, "status": "pendente" },
-              { "id": "op_registros__v_deos", "label": "Vídeos", "critical": false, "status": "pendente" },
-              { "id": "op_registros__depoimentos", "label": "Depoimentos", "critical": false, "status": "pendente" },
-              { "id": "op_registros__bastidores", "label": "Bastidores", "critical": false, "status": "pendente" },
-              { "id": "op_registros__reels_gravados", "label": "Reels gravados", "critical": false, "status": "pendente" },
-              { "id": "op_registros__stories_publicados", "label": "Stories publicados", "critical": false, "status": "pendente" }
-            ]
+            "items": []
           }
         ]
       },

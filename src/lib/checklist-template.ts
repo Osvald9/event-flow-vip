@@ -152,16 +152,7 @@ export const CHECKLIST_TEMPLATE: ChecklistStage[] = [
         "Camisas de trabalho",
       ]),
       g("op_equipe", "Equipe", []),
-      g("op_registros", "Registros", [
-        "Fotos do stand",
-        "Fotos da equipe",
-        "Fotos dos clientes",
-        "Vídeos",
-        "Depoimentos",
-        "Bastidores",
-        "Reels gravados",
-        "Stories publicados",
-      ]),
+      g("op_registros", "Registros", []),
     ],
   },
   {

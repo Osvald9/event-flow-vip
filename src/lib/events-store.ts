@@ -394,6 +394,51 @@ export async function removeItemFromGroup(eventId: string, itemId: string) {
   }
 }
 
+export async function addPhotoToGroup(eventId: string, groupId: string, attachment: string) {
+  const current = cache || [];
+  let updatedEvent: EventInfo | null = null;
+  const newItemId = `${groupId}__${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+
+  const next = current.map((e) => {
+    if (e.id !== eventId) return e;
+    updatedEvent = {
+      ...e,
+      updatedAt: new Date().toISOString(),
+      stages: e.stages.map((s) => ({
+        ...s,
+        groups: s.groups.map((g) => {
+          if (g.id !== groupId) return g;
+          return {
+            ...g,
+            items: [
+              ...g.items,
+              {
+                id: newItemId,
+                label: "Foto",
+                attachment,
+                status: "concluido" as const,
+              },
+            ],
+          };
+        }),
+      })),
+    };
+    return updatedEvent;
+  });
+
+  writeCache(next);
+
+  if (updatedEvent) {
+    const { error } = await supabase.from("events").update({
+      stages: updatedEvent.stages,
+      updatedAt: updatedEvent.updatedAt,
+    }).eq("id", eventId);
+    if (error) {
+      console.error("Erro ao adicionar foto no Supabase:", error);
+    }
+  }
+}
+
 // ---- Derived helpers ----
 
 export function allItems(ev: EventInfo): ChecklistItem[] {
@@ -403,7 +448,8 @@ export function allItems(ev: EventInfo): ChecklistItem[] {
       g.id === "comercial_contrapartidas" || 
       g.id === "tec_internet" || 
       g.id === "tec_banda" ||
-      g.id === "op_equipe" ? [] : g.items
+      g.id === "op_equipe" ||
+      g.id === "op_registros" ? [] : g.items
     )
   );
 }
