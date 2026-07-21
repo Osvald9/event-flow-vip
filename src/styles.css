@@ -166,12 +166,32 @@
   );
 }
 
+@page {
+  margin: 10mm;
+  size: A4 portrait;
+}
+
 @media print {
+  @page {
+    margin: 10mm;
+    size: A4 portrait;
+  }
   .no-print {
     display: none !important;
   }
   body {
     background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  section,
+  article,
+  .rounded-lg,
+  .rounded-2xl,
+  .print-break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 }
 

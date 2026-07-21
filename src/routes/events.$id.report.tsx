@@ -387,7 +387,7 @@ function StageSection({
   if (!hasItems) return null;
   
   return (
-    <section className="space-y-3">
+    <section className="space-y-3" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
       <div className="mb-2 flex items-center justify-between border-b border-border pb-1">
         <SectionTitle>{title}</SectionTitle>
       </div>
@@ -412,7 +412,7 @@ function StageSection({
           }
 
           return (
-            <div key={group.id} className="rounded-lg border border-border p-3 space-y-2 bg-muted/10">
+            <div key={group.id} className="rounded-lg border border-border p-3 space-y-2 bg-muted/10" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
               <h4 className="text-xs font-bold text-foreground/80 uppercase tracking-wide">{group.title}</h4>
               {group.id === "op_registros" ? (
                 <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 mt-2">
@@ -476,11 +476,11 @@ function NotesSection({ ev }: { ev: EventInfo }) {
   const groupsWithNotes = ev.stages.flatMap((s) => s.groups).filter((g) => g.notes);
   if (groupsWithNotes.length === 0) return null;
   return (
-    <section>
+    <section style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
       <SectionTitle>Observações gerais das áreas</SectionTitle>
       <div className="space-y-2">
         {groupsWithNotes.map((g) => (
-          <div key={g.id} className="rounded-md border border-border bg-muted/30 p-3 text-xs">
+          <div key={g.id} className="rounded-md border border-border bg-muted/30 p-3 text-xs" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
             <div className="font-semibold text-foreground">
               {g.id === "op_equipe" ? "Nome dos funcionários (Equipe)" : g.title}
             </div>
@@ -495,7 +495,7 @@ function NotesSection({ ev }: { ev: EventInfo }) {
 function PendingItemsSection({ items }: { items: ChecklistItem[] }) {
   if (items.length === 0) {
     return (
-      <section className="rounded-lg border border-border bg-card p-4">
+      <section className="rounded-lg border border-border bg-card p-4" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
         <SectionTitle>Pendências gerais</SectionTitle>
         <p className="text-xs text-success font-medium">
           ✓ Nenhuma pendência — todas as tarefas operacionais estão concluídas!
@@ -505,7 +505,7 @@ function PendingItemsSection({ items }: { items: ChecklistItem[] }) {
   }
 
   return (
-    <section className="rounded-lg border border-border bg-card p-4 space-y-2">
+    <section className="rounded-lg border border-border bg-card p-4 space-y-2" style={{ breakInside: "avoid", pageBreakInside: "avoid" }}>
       <div className="flex items-center justify-between border-b border-border pb-2">
         <SectionTitle>Pendências gerais</SectionTitle>
         <span className="text-xs font-semibold text-muted-foreground">
@@ -518,6 +518,7 @@ function PendingItemsSection({ items }: { items: ChecklistItem[] }) {
           <div
             key={it.id}
             className="flex items-center gap-2 p-2 border border-border/70 rounded-md bg-muted/20 text-xs"
+            style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
           >
             <span className="text-warning font-bold">○</span>
             <span className="truncate flex-1 font-medium text-foreground/90" title={it.label}>
