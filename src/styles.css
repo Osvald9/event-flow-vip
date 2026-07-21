@@ -167,24 +167,56 @@
 }
 
 @page {
-  margin: 10mm;
   size: A4 portrait;
+  margin: 0;
 }
 
 @media print {
   @page {
-    margin: 10mm;
     size: A4 portrait;
+    margin: 0;
   }
-  .no-print {
-    display: none !important;
-  }
+
+  html,
   body {
+    margin: 0 !important;
+    padding: 0 !important;
     background: white !important;
     color: black !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+
+  /* Hide app navigation, sidebars, and toolbar */
+  header,
+  aside,
+  [data-slot="sidebar"],
+  .no-print {
+    display: none !important;
+  }
+
+  /* Printable container with clean internal margins */
+  .report-printable {
+    margin: 0 !important;
+    padding: 10mm 12mm !important;
+    border: none !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    background: white !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Remove bottom spacing on the last element to prevent blank trailing page */
+  .report-printable > *:last-child,
+  footer {
+    margin-bottom: 0 !important;
+  }
+
   section,
   article,
   .rounded-lg,

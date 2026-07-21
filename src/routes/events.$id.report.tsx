@@ -28,8 +28,8 @@ import type { ChecklistItem, EventInfo } from "@/lib/types";
 export const Route = createFileRoute("/events/$id/report")({
   head: () => ({
     meta: [
-      { title: "Relatório — Painel Conexão VIP" },
-      { name: "description", content: "Relatório visual do evento para supervisão." },
+      { title: "Painel Conexão VIP — Evento" },
+      { name: "description", content: "Visão do evento para supervisão." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -76,8 +76,8 @@ function ReportPage() {
     .slice(0, 6);
 
   return (
-    <div className="bg-muted/30 py-6 print:bg-white print:py-0">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+    <div className="bg-muted/30 py-6 print:bg-white print:py-0 print:m-0 print:p-0">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 print:max-w-none print:px-0 print:m-0">
         {/* Toolbar */}
         <div className="no-print mb-4 flex items-center justify-between gap-3">
           <Button asChild variant="ghost" size="sm" className="-ml-2">
@@ -89,12 +89,12 @@ function ReportPage() {
             onClick={() => window.print()}
             className="bg-brand text-brand-foreground hover:bg-brand/90"
           >
-            <Printer className="mr-1.5 h-4 w-4" /> Gerar relatório / Imprimir
+            <Printer className="mr-1.5 h-4 w-4" /> Imprimir / Salvar PDF
           </Button>
         </div>
 
-        {/* Report page */}
-        <div className="rounded-2xl bg-card shadow-sm print:rounded-none print:shadow-none">
+        {/* Report page container */}
+        <div className="report-printable rounded-2xl bg-card shadow-sm print:rounded-none print:shadow-none">
           {/* Header */}
           <div className="brand-gradient rounded-t-2xl p-6 print:rounded-none">
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -102,7 +102,7 @@ function ReportPage() {
                 <img src="/logo-conexao.png" alt="Conexão VIP Logo" className="h-12 w-auto object-contain" />
                 <div className="min-w-0">
                   <div className="text-[11px] font-bold uppercase tracking-widest text-primary/70">
-                    Conexão VIP · Relatório do evento
+                    Conexão VIP
                   </div>
                   <h1 className="mt-1 font-display text-3xl font-bold text-primary">
                     {ev.name}
@@ -237,8 +237,7 @@ function ReportPage() {
             <PendingItemsSection items={pending} />
 
             <footer className="border-t border-border pt-4 text-center text-[11px] text-muted-foreground">
-              Relatório gerado pelo Painel de Eventos Conexão VIP ·{" "}
-              {new Date().toLocaleString("pt-BR")}
+              Painel de Eventos Conexão VIP · {new Date().toLocaleDateString("pt-BR")}
             </footer>
           </div>
         </div>
