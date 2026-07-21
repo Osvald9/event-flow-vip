@@ -98,26 +98,29 @@ function ReportPage() {
           {/* Header */}
           <div className="brand-gradient rounded-t-2xl p-6 print:rounded-none">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="min-w-0">
-                <div className="text-[11px] font-bold uppercase tracking-widest text-primary/70">
-                  Conexão VIP · Relatório do evento
-                </div>
-                <h1 className="mt-1 font-display text-3xl font-bold text-primary">
-                  {ev.name}
-                </h1>
-                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-primary/80">
-                  <span className="inline-flex items-center gap-1">
-                    <Calendar className="h-4 w-4" /> 
-                    {ev.endDate && ev.endDate !== ev.date 
-                      ? `${formatDate(ev.date)} a ${formatDate(ev.endDate)}`
-                      : formatDate(ev.date)}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin className="h-4 w-4" /> {ev.location || "—"}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <User className="h-4 w-4" /> {ev.organizer || "—"}
-                  </span>
+              <div className="flex flex-wrap items-center gap-4 min-w-0">
+                <img src="/logo-conexao.png" alt="Conexão VIP Logo" className="h-12 w-auto object-contain" />
+                <div className="min-w-0">
+                  <div className="text-[11px] font-bold uppercase tracking-widest text-primary/70">
+                    Conexão VIP · Relatório do evento
+                  </div>
+                  <h1 className="mt-1 font-display text-3xl font-bold text-primary">
+                    {ev.name}
+                  </h1>
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-primary/80">
+                    <span className="inline-flex items-center gap-1">
+                      <Calendar className="h-4 w-4" /> 
+                      {ev.endDate && ev.endDate !== ev.date 
+                        ? `${formatDate(ev.date)} a ${formatDate(ev.endDate)}`
+                        : formatDate(ev.date)}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin className="h-4 w-4" /> {ev.location || "—"}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <User className="h-4 w-4" /> {ev.organizer || "—"}
+                    </span>
+                  </div>
                 </div>
               </div>
               <div className="text-right">

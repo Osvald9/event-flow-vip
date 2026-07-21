@@ -101,7 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.cdnfonts.com/css/alibaba-sans",
       },
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>" },
+      { rel: "icon", href: "/logo-conexao.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -137,10 +137,8 @@ function RootComponent() {
               <SidebarTrigger />
               <div className="h-5 w-px bg-border" />
               <div className="flex min-w-0 items-center gap-2">
-                <span className="rounded bg-brand px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-brand-foreground">
-                  Conexão VIP
-                </span>
-                <span className="truncate text-sm text-muted-foreground">
+                <img src="/logo-conexao.png" alt="Conexão VIP" className="h-8 w-auto object-contain" />
+                <span className="truncate text-sm font-semibold text-foreground">
                   Painel de Eventos
                 </span>
               </div>

@@ -34,14 +34,9 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-3">
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand text-brand-foreground">
-            <Zap className="h-5 w-5" strokeWidth={2.5} />
-          </div>
+          <img src="/logo-conexao.png" alt="Conexão VIP Logo" className="h-9 w-auto max-w-[140px] object-contain" />
           <div className="min-w-0 leading-tight group-data-[collapsible=icon]:hidden">
-            <div className="text-[11px] font-medium uppercase tracking-widest text-sidebar-foreground/60">
-              Conexão VIP
-            </div>
-            <div className="truncate font-display text-sm font-semibold text-sidebar-foreground">
+            <div className="truncate font-display text-xs font-semibold text-sidebar-foreground">
               Painel de Eventos
             </div>
           </div>
