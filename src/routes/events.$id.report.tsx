@@ -205,18 +205,6 @@ function ReportPage() {
               </section>
             )}
 
-            {/* Pending list */}
-            <section>
-              <SectionTitle>Pendências gerais</SectionTitle>
-              {pending.length === 0 ? (
-                <p className="text-sm text-success">
-                  Nenhuma pendência — evento pronto.
-                </p>
-              ) : (
-                <ItemList items={pending.slice(0, 20)} />
-              )}
-            </section>
-
             {/* Per-area subchecklists */}
             <StageSection ev={ev} title="Checklist técnico" stageId="tecnico" />
             <StageSection
@@ -241,6 +229,9 @@ function ReportPage() {
 
             {/* Attachments/notes */}
             <NotesSection ev={ev} />
+
+            {/* Pending list as last section */}
+            <PendingItemsSection items={pending} />
 
             <footer className="border-t border-border pt-4 text-center text-[11px] text-muted-foreground">
               Relatório gerado pelo Painel de Eventos Conexão VIP ·{" "}
@@ -489,6 +480,49 @@ function NotesSection({ ev }: { ev: EventInfo }) {
               {g.id === "op_equipe" ? "Nome dos funcionários (Equipe)" : g.title}
             </div>
             <div className="mt-1 text-muted-foreground whitespace-pre-line">{g.notes}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PendingItemsSection({ items }: { items: ChecklistItem[] }) {
+  if (items.length === 0) {
+    return (
+      <section className="rounded-lg border border-border bg-card p-4">
+        <SectionTitle>Pendências gerais</SectionTitle>
+        <p className="text-xs text-success font-medium">
+          ✓ Nenhuma pendência — todas as tarefas operacionais estão concluídas!
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="rounded-lg border border-border bg-card p-4 space-y-2">
+      <div className="flex items-center justify-between border-b border-border pb-2">
+        <SectionTitle>Pendências gerais</SectionTitle>
+        <span className="text-xs font-semibold text-muted-foreground">
+          {items.length} {items.length === 1 ? "item pendente" : "itens pendentes"}
+        </span>
+      </div>
+
+      <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 pt-1">
+        {items.map((it) => (
+          <div
+            key={it.id}
+            className="flex items-center gap-2 p-2 border border-border/70 rounded-md bg-muted/20 text-xs"
+          >
+            <span className="text-warning font-bold">○</span>
+            <span className="truncate flex-1 font-medium text-foreground/90" title={it.label}>
+              {it.label}
+            </span>
+            {it.dueDate && (
+              <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                {new Date(`${it.dueDate}T00:00:00`).toLocaleDateString("pt-BR")}
+              </span>
+            )}
           </div>
         ))}
       </div>
