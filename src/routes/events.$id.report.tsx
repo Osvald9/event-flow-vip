@@ -399,8 +399,16 @@ function StageSection({
       </div>
       <div className="space-y-4">
         {groups.map((group) => {
-          const activeItems = group.items.filter((i) => i.status !== "na");
-          if (activeItems.length === 0) return null;
+          const isInternetOrBanda = group.id === "tec_internet" || group.id === "tec_banda";
+          const activeItems = isInternetOrBanda
+            ? group.items.filter((i) => i.status === "concluido")
+            : group.items.filter((i) => i.status !== "na");
+
+          if (isInternetOrBanda && activeItems.length === 0 && !group.notes) {
+            return null;
+          }
+          if (!isInternetOrBanda && activeItems.length === 0) return null;
+
           return (
             <div key={group.id} className="rounded-lg border border-border p-3 space-y-2 bg-muted/10">
               <h4 className="text-xs font-bold text-foreground/80 uppercase tracking-wide">{group.title}</h4>
@@ -422,6 +430,17 @@ function StageSection({
                       )}
                     </div>
                   ))}
+                </div>
+              ) : isInternetOrBanda ? (
+                <div className="flex flex-wrap gap-1.5 my-1">
+                  {activeItems.map((it) => (
+                    <span key={it.id} className="inline-flex items-center gap-1 rounded bg-success/10 border border-success/20 px-2.5 py-1 text-xs text-success font-medium">
+                      ✓ {it.label}
+                    </span>
+                  ))}
+                  {activeItems.length === 0 && (
+                    <span className="text-xs text-muted-foreground">Nenhuma opção confirmada.</span>
+                  )}
                 </div>
               ) : (
                 <ul className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
