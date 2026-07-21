@@ -17,13 +17,10 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { StatusBadge, ItemStatusPill } from "@/components/status-badge";
 import {
   allItems,
-  completionRate,
   eventStatus,
-  stageCompletion,
   useEvent,
 } from "@/lib/events-store";
 import type { ChecklistItem, EventInfo } from "@/lib/types";
@@ -66,7 +63,6 @@ function ReportPage() {
   if (!ev) throw notFound();
 
   const items = allItems(ev);
-  const rate = completionRate(items);
   const status = eventStatus(ev);
   const done = items.filter((i) => i.status === "concluido");
   const pending = items.filter(
@@ -396,12 +392,10 @@ function StageSection({
   const hasItems = groups.some((g) => g.items.filter((i) => i.status !== "na").length > 0);
   if (!hasItems) return null;
   
-  const r = stageCompletion(ev, stageId);
   return (
     <section className="space-y-3">
       <div className="mb-2 flex items-center justify-between border-b border-border pb-1">
         <SectionTitle>{title}</SectionTitle>
-        <span className="text-xs font-semibold text-primary">{r}%</span>
       </div>
       <div className="space-y-4">
         {groups.map((group) => {

@@ -1,32 +1,130 @@
 import { useSyncExternalStore } from "react";
 import { CHECKLIST_TEMPLATE } from "./checklist-template";
 import type { ChecklistItem, EventInfo, EventStatus, ItemStatus } from "./types";
+import { supabase } from "./supabase";
 
 const KEY = "conexao-vip-events-v1";
 
 type Listener = () => void;
 const listeners = new Set<Listener>();
 let cache: EventInfo[] | null = null;
+let isSyncing = false;
+
+function notify() {
+  listeners.forEach((l) => l());
+}
+
+function writeCache(next: EventInfo[]) {
+  cache = next;
+  notify();
+}
+
+async function fetchAndSync() {
+  if (typeof window === "undefined" || isSyncing) return;
+  isSyncing = true;
+
+  try {
+    // 1. Buscar dados do Supabase
+    const { data, error } = await supabase
+      .from("events")
+      .select("*")
+      .order("createdAt", { ascending: false });
+
+    if (error) {
+      console.error("Erro ao buscar dados do Supabase:", error);
+      isSyncing = false;
+      return;
+    }
+
+    const rawLocal = window.localStorage.getItem(KEY);
+
+    // 2. Se houver dados locais no localStorage, migrar para o Supabase
+    if (rawLocal) {
+      try {
+        const localEvents = JSON.parse(rawLocal) as EventInfo[];
+        if (localEvents.length > 0) {
+          for (const localEv of localEvents) {
+            // Verificar se o evento já existe no Supabase para não duplicar
+            const exists = data?.some((dbEv) => dbEv.id === localEv.id);
+            if (!exists) {
+              const { error: insertError } = await supabase
+                .from("events")
+                .insert(localEv);
+              if (insertError) {
+                console.error(`Erro ao subir evento local ${localEv.name}:`, insertError);
+              } else {
+                console.log(`Evento local ${localEv.name} subido para a nuvem.`);
+              }
+            }
+          }
+          // Limpar do localStorage após migração bem sucedida
+          window.localStorage.removeItem(KEY);
+
+          // Buscar dados atualizados
+          const { data: refreshedData } = await supabase
+            .from("events")
+            .select("*")
+            .order("createdAt", { ascending: false });
+          if (refreshedData) {
+            writeCache(refreshedData);
+            isSyncing = false;
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Erro ao processar dados locais do localStorage:", e);
+      }
+    }
+
+    // 3. Se o banco estiver completamente vazio, realizar o seed inicial no Supabase
+    if ((!data || data.length === 0) && !rawLocal) {
+      const seedEvents = seed();
+      for (const sEv of seedEvents) {
+        await supabase.from("events").insert(sEv);
+      }
+      const { data: seededData } = await supabase
+        .from("events")
+        .select("*")
+        .order("createdAt", { ascending: false });
+      if (seededData) {
+        writeCache(seededData);
+        isSyncing = false;
+        return;
+      }
+    }
+
+    if (data) {
+      writeCache(data);
+    }
+  } catch (err) {
+    console.error("Erro na sincronização:", err);
+  } finally {
+    isSyncing = false;
+  }
+}
+
+// Iniciar a busca e sincronização no cliente
+if (typeof window !== "undefined") {
+  fetchAndSync();
+
+  // Escutar atualizações em tempo real do Supabase
+  supabase
+    .channel("public:events")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "events" },
+      () => {
+        fetchAndSync();
+      }
+    )
+    .subscribe();
+}
 
 function read(): EventInfo[] {
   if (cache) return cache;
   if (typeof window === "undefined") return (cache = []);
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    cache = raw ? (JSON.parse(raw) as EventInfo[]) : seed();
-    if (!raw) write(cache);
-    return cache;
-  } catch {
-    return (cache = []);
-  }
-}
-
-function write(next: EventInfo[]) {
-  cache = next;
-  if (typeof window !== "undefined") {
-    window.localStorage.setItem(KEY, JSON.stringify(next));
-  }
-  listeners.forEach((l) => l());
+  // Retorna cache vazio inicialmente até a requisição do Supabase completar
+  return (cache = []);
 }
 
 function subscribe(l: Listener) {
@@ -61,7 +159,6 @@ function seed(): EventInfo[] {
     updatedAt: now,
     stages: cloneTemplate(),
   };
-  // Mark a few items as done in demo
   demo.stages[0].groups[0].items[0].status = "concluido";
   demo.stages[0].groups[0].items[7].status = "concluido";
   demo.stages[1].groups[0].items[0].status = "concluido";
@@ -78,10 +175,9 @@ export function useEvent(id: string | undefined): EventInfo | undefined {
   return events.find((e) => e.id === id);
 }
 
-export function createEvent(input: Omit<EventInfo, "id" | "createdAt" | "updatedAt" | "stages">) {
+export async function createEvent(input: Omit<EventInfo, "id" | "createdAt" | "updatedAt" | "stages">) {
   const now = new Date().toISOString();
   
-  // Calculate days count
   const start = new Date(input.date);
   const end = input.endDate ? new Date(input.endDate) : start;
   const diffTime = Math.abs(end.getTime() - start.getTime());
@@ -96,12 +192,22 @@ export function createEvent(input: Omit<EventInfo, "id" | "createdAt" | "updated
     updatedAt: now,
     stages: cloneTemplate(),
   };
-  write([ev, ...read()]);
+
+  const current = cache || [];
+  writeCache([ev, ...current]);
+
+  const { error } = await supabase.from("events").insert(ev);
+  if (error) {
+    console.error("Erro ao criar evento no Supabase:", error);
+  }
   return ev;
 }
 
-export function updateEvent(id: string, patch: Partial<EventInfo>) {
-  const next = read().map((e) => {
+export async function updateEvent(id: string, patch: Partial<EventInfo>) {
+  const current = cache || [];
+  let updatedEvent: EventInfo | null = null;
+
+  const next = current.map((e) => {
     if (e.id !== id) return e;
     const newPatch = { ...patch };
     if (newPatch.date || newPatch.endDate) {
@@ -113,23 +219,47 @@ export function updateEvent(id: string, patch: Partial<EventInfo>) {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
       newPatch.days = String(isNaN(diffDays) ? 1 : diffDays);
     }
-    return { ...e, ...newPatch, updatedAt: new Date().toISOString() };
+    updatedEvent = { ...e, ...newPatch, updatedAt: new Date().toISOString() };
+    return updatedEvent;
   });
-  write(next);
+
+  writeCache(next);
+
+  if (updatedEvent) {
+    const { error } = await supabase
+      .from("events")
+      .update(updatedEvent)
+      .eq("id", id);
+    if (error) {
+      console.error("Erro ao atualizar evento no Supabase:", error);
+    }
+  }
 }
 
-export function deleteEvent(id: string) {
-  write(read().filter((e) => e.id !== id));
+export async function deleteEvent(id: string) {
+  const current = cache || [];
+  writeCache(current.filter((e) => e.id !== id));
+
+  const { error } = await supabase
+    .from("events")
+    .delete()
+    .eq("id", id);
+  if (error) {
+    console.error("Erro ao deletar evento no Supabase:", error);
+  }
 }
 
-export function updateItem(
+export async function updateItem(
   eventId: string,
   itemId: string,
   patch: Partial<ChecklistItem>,
 ) {
-  const next = read().map((e) => {
+  const current = cache || [];
+  let updatedEvent: EventInfo | null = null;
+
+  const next = current.map((e) => {
     if (e.id !== eventId) return e;
-    return {
+    updatedEvent = {
       ...e,
       updatedAt: new Date().toISOString(),
       stages: e.stages.map((s) => ({
@@ -140,14 +270,32 @@ export function updateItem(
         })),
       })),
     };
+    return updatedEvent;
   });
-  write(next);
+
+  writeCache(next);
+
+  if (updatedEvent) {
+    const { error } = await supabase
+      .from("events")
+      .update({
+        stages: updatedEvent.stages,
+        updatedAt: updatedEvent.updatedAt
+      })
+      .eq("id", eventId);
+    if (error) {
+      console.error("Erro ao atualizar item no Supabase:", error);
+    }
+  }
 }
 
-export function updateGroupNotes(eventId: string, groupId: string, notes: string) {
-  const next = read().map((e) => {
+export async function updateGroupNotes(eventId: string, groupId: string, notes: string) {
+  const current = cache || [];
+  let updatedEvent: EventInfo | null = null;
+
+  const next = current.map((e) => {
     if (e.id !== eventId) return e;
-    return {
+    updatedEvent = {
       ...e,
       updatedAt: new Date().toISOString(),
       stages: e.stages.map((s) => ({
@@ -155,8 +303,23 @@ export function updateGroupNotes(eventId: string, groupId: string, notes: string
         groups: s.groups.map((g) => (g.id === groupId ? { ...g, notes } : g)),
       })),
     };
+    return updatedEvent;
   });
-  write(next);
+
+  writeCache(next);
+
+  if (updatedEvent) {
+    const { error } = await supabase
+      .from("events")
+      .update({
+        stages: updatedEvent.stages,
+        updatedAt: updatedEvent.updatedAt
+      })
+      .eq("id", eventId);
+    if (error) {
+      console.error("Erro ao atualizar notas no Supabase:", error);
+    }
+  }
 }
 
 // ---- Derived helpers ----
@@ -186,10 +349,11 @@ export function stageCompletion(ev: EventInfo, stageId: string): number {
   if (stageId === "comercial") {
     const partnershipDone = ev.partnershipType ? 1 : 0;
     const contrapartidasGroup = stage.groups.find((g) => g.id === "comercial_contrapartidas");
-    const contrapartidasDone = contrapartidasGroup 
-      ? contrapartidasGroup.items.filter((i) => i.status === "concluido").length 
-      : 0;
-    const contrapartidasTotal = contrapartidasGroup ? contrapartidasGroup.items.length : 0;
+    const countableContrapartidas = contrapartidasGroup
+      ? contrapartidasGroup.items.filter((i) => i.status !== "na")
+      : [];
+    const contrapartidasDone = countableContrapartidas.filter((i) => i.status === "concluido").length;
+    const contrapartidasTotal = countableContrapartidas.length;
     
     const totalDone = partnershipDone + contrapartidasDone;
     const totalCount = 1 + contrapartidasTotal;
