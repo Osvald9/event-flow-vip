@@ -317,6 +317,83 @@ export async function updateGroupNotes(eventId: string, groupId: string, notes: 
   }
 }
 
+export async function addItemToGroup(eventId: string, groupId: string, label: string) {
+  const current = cache || [];
+  let updatedEvent: EventInfo | null = null;
+  const newItemId = `${groupId}__${Date.now().toString(36)}`;
+
+  const next = current.map((e) => {
+    if (e.id !== eventId) return e;
+    updatedEvent = {
+      ...e,
+      updatedAt: new Date().toISOString(),
+      stages: e.stages.map((s) => ({
+        ...s,
+        groups: s.groups.map((g) => {
+          if (g.id !== groupId) return g;
+          return {
+            ...g,
+            items: [
+              ...g.items,
+              {
+                id: newItemId,
+                label: label.trim(),
+                status: "concluido" as const,
+              },
+            ],
+          };
+        }),
+      })),
+    };
+    return updatedEvent;
+  });
+
+  writeCache(next);
+
+  if (updatedEvent) {
+    const { error } = await supabase.from("events").update({
+      stages: updatedEvent.stages,
+      updatedAt: updatedEvent.updatedAt,
+    }).eq("id", eventId);
+    if (error) {
+      console.error("Erro ao adicionar item no Supabase:", error);
+    }
+  }
+}
+
+export async function removeItemFromGroup(eventId: string, itemId: string) {
+  const current = cache || [];
+  let updatedEvent: EventInfo | null = null;
+
+  const next = current.map((e) => {
+    if (e.id !== eventId) return e;
+    updatedEvent = {
+      ...e,
+      updatedAt: new Date().toISOString(),
+      stages: e.stages.map((s) => ({
+        ...s,
+        groups: s.groups.map((g) => ({
+          ...g,
+          items: g.items.filter((it) => it.id !== itemId),
+        })),
+      })),
+    };
+    return updatedEvent;
+  });
+
+  writeCache(next);
+
+  if (updatedEvent) {
+    const { error } = await supabase.from("events").update({
+      stages: updatedEvent.stages,
+      updatedAt: updatedEvent.updatedAt,
+    }).eq("id", eventId);
+    if (error) {
+      console.error("Erro ao remover item no Supabase:", error);
+    }
+  }
+}
+
 // ---- Derived helpers ----
 
 export function allItems(ev: EventInfo): ChecklistItem[] {
@@ -325,7 +402,8 @@ export function allItems(ev: EventInfo): ChecklistItem[] {
       g.id === "comercial_parceria" || 
       g.id === "comercial_contrapartidas" || 
       g.id === "tec_internet" || 
-      g.id === "tec_banda" ? [] : g.items
+      g.id === "tec_banda" ||
+      g.id === "op_equipe" ? [] : g.items
     )
   );
 }

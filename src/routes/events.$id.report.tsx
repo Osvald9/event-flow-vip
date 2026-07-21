@@ -442,6 +442,17 @@ function StageSection({
                     <span className="text-xs text-muted-foreground">Nenhuma opção confirmada.</span>
                   )}
                 </div>
+              ) : group.id === "op_equipe" ? (
+                <div className="flex flex-wrap gap-1.5 my-1">
+                  {group.items.map((it) => (
+                    <span key={it.id} className="inline-flex items-center gap-1 rounded bg-card border border-border px-2.5 py-1 text-xs text-foreground font-medium shadow-sm">
+                      <User className="h-3.5 w-3.5 text-muted-foreground" /> {it.label}
+                    </span>
+                  ))}
+                  {group.items.length === 0 && (
+                    <span className="text-xs text-muted-foreground italic">Nenhum funcionário cadastrado.</span>
+                  )}
+                </div>
               ) : (
                 <ul className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                   {activeItems.map((it) => (

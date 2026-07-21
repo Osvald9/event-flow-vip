@@ -190,15 +190,7 @@
           {
             "id": "op_equipe",
             "title": "Equipe",
-            "items": [
-              { "id": "op_equipe__supervisor", "label": "Supervisor", "critical": false, "status": "pendente" },
-              { "id": "op_equipe__comercial", "label": "Comercial", "critical": false, "status": "pendente" },
-              { "id": "op_equipe__marketing", "label": "Marketing", "critical": false, "status": "pendente" },
-              { "id": "op_equipe__t_cnico", "label": "Técnico", "critical": false, "status": "pendente" },
-              { "id": "op_equipe__atendimento", "label": "Atendimento", "critical": false, "status": "pendente" },
-              { "id": "op_equipe__fot_grafo", "label": "Fotógrafo", "critical": false, "status": "pendente" },
-              { "id": "op_equipe__apoio", "label": "Apoio", "critical": false, "status": "pendente" }
-            ]
+            "items": []
           },
           {
             "id": "op_registros",

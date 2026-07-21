@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   ArrowLeft,
   AlertTriangle,
@@ -6,6 +7,9 @@ import {
   Paperclip,
   Trash2,
   Upload,
+  Plus,
+  X,
+  User,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,6 +43,8 @@ import {
   updateItem,
   updateEvent,
   updateGroupNotes,
+  addItemToGroup,
+  removeItemFromGroup,
   useEvent,
 } from "@/lib/events-store";
 import type { ChecklistItem, ItemStatus } from "@/lib/types";
@@ -292,6 +298,8 @@ function ChecklistPage() {
                                 />
                               </div>
                             </div>
+                          ) : group.id === "op_equipe" ? (
+                            <TeamGroupSection eventId={ev.id} group={group} />
                           ) : (
                             <div className="space-y-4 p-3 bg-muted/20 border border-border rounded-lg">
                               <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
@@ -316,11 +324,11 @@ function ChecklistPage() {
                               </div>
                               <div className="pt-3 border-t border-border">
                                 <Label htmlFor={`notes-${group.id}`} className="text-xs font-semibold mb-1.5 block text-foreground">
-                                  {group.id === "op_equipe" ? "Nome dos funcionários" : "Observações do grupo"}
+                                  Observações do grupo
                                 </Label>
                                 <Textarea
                                   id={`notes-${group.id}`}
-                                  placeholder={group.id === "op_equipe" ? "Digite os nomes dos funcionários contratados/escalados para a equipe..." : `Observações gerais sobre ${group.title.toLowerCase()}...`}
+                                  placeholder={`Observações gerais sobre ${group.title.toLowerCase()}...`}
                                   value={group.notes || ""}
                                   onChange={(e) => updateGroupNotes(ev.id, group.id, e.target.value)}
                                   className="bg-card text-xs"
@@ -443,6 +451,97 @@ function ItemRow({ eventId, item }: { eventId: string; item: ChecklistItem }) {
             />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function TeamGroupSection({
+  eventId,
+  group,
+}: {
+  eventId: string;
+  group: { id: string; title: string; items: ChecklistItem[]; notes?: string };
+}) {
+  const [name, setName] = useState("");
+
+  const handleAdd = () => {
+    if (!name.trim()) return;
+    addItemToGroup(eventId, group.id, name.trim());
+    setName("");
+    toast.success("Funcionário adicionado à equipe.");
+  };
+
+  return (
+    <div className="space-y-4 p-3 bg-muted/20 border border-border rounded-lg">
+      <div>
+        <Label className="text-xs font-semibold mb-1.5 block text-foreground">
+          Inserir funcionário (digite o nome e pressione Enter)
+        </Label>
+        <div className="flex gap-2">
+          <Input
+            placeholder="Nome do funcionário (ex: Mayko, Ana Silva)..."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAdd();
+              }
+            }}
+            className="bg-card text-xs flex-1"
+          />
+          <Button type="button" size="sm" onClick={handleAdd} className="h-9 px-3 bg-primary text-primary-foreground">
+            <Plus className="h-4 w-4 mr-1" /> Adicionar
+          </Button>
+        </div>
+      </div>
+
+      <div>
+        <Label className="text-xs font-semibold mb-1.5 block text-foreground">
+          Membros da equipe ({group.items.length})
+        </Label>
+        <div className="flex flex-wrap gap-2">
+          {group.items.map((it) => (
+            <span
+              key={it.id}
+              className="inline-flex items-center gap-1.5 rounded-full bg-card border border-border px-3 py-1 text-xs font-medium text-foreground shadow-sm"
+            >
+              <User className="h-3.5 w-3.5 text-muted-foreground" />
+              <span>{it.label}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  removeItemFromGroup(eventId, it.id);
+                  toast.success("Funcionário removido.");
+                }}
+                className="ml-1 rounded-full p-0.5 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                title="Remover"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          ))}
+          {group.items.length === 0 && (
+            <p className="text-xs text-muted-foreground italic">
+              Nenhum funcionário inserido. Digite o nome no campo acima e pressione Enter.
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="pt-3 border-t border-border">
+        <Label htmlFor={`notes-${group.id}`} className="text-xs font-semibold mb-1.5 block text-foreground">
+          Observações da equipe
+        </Label>
+        <Textarea
+          id={`notes-${group.id}`}
+          placeholder="Observações adicionais sobre a equipe..."
+          value={group.notes || ""}
+          onChange={(e) => updateGroupNotes(eventId, group.id, e.target.value)}
+          className="bg-card text-xs"
+          rows={2}
+        />
       </div>
     </div>
   );
