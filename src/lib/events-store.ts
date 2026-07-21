@@ -448,6 +448,8 @@ export function allItems(ev: EventInfo): ChecklistItem[] {
       g.id === "comercial_contrapartidas" || 
       g.id === "tec_internet" || 
       g.id === "tec_banda" ||
+      g.id === "op_stand" ||
+      g.id === "op_materiais" ||
       g.id === "op_equipe" ||
       g.id === "op_registros" ? [] : g.items
     )

@@ -390,18 +390,23 @@ function StageSection({
       </div>
       <div className="space-y-4">
         {groups.map((group) => {
-          const isInternetOrBanda = group.id === "tec_internet" || group.id === "tec_banda";
-          const activeItems = isInternetOrBanda
+          const isSelectionGroup = 
+            group.id === "tec_internet" || 
+            group.id === "tec_banda" || 
+            group.id === "op_stand" || 
+            group.id === "op_materiais";
+
+          const activeItems = isSelectionGroup
             ? group.items.filter((i) => i.status === "concluido")
             : group.items.filter((i) => i.status !== "na");
 
           if (group.id === "op_registros" && group.items.filter((i) => i.attachment).length === 0 && !group.notes) {
             return null;
           }
-          if (isInternetOrBanda && activeItems.length === 0 && !group.notes) {
+          if (isSelectionGroup && activeItems.length === 0 && !group.notes) {
             return null;
           }
-          if (!isInternetOrBanda && group.id !== "op_registros" && activeItems.length === 0) return null;
+          if (!isSelectionGroup && group.id !== "op_registros" && activeItems.length === 0) return null;
 
           return (
             <div key={group.id} className="rounded-lg border border-border p-3 space-y-2 bg-muted/10">
@@ -417,7 +422,7 @@ function StageSection({
                     <span className="text-xs text-muted-foreground italic col-span-full">Nenhuma foto enviada.</span>
                   )}
                 </div>
-              ) : isInternetOrBanda ? (
+              ) : isSelectionGroup ? (
                 <div className="flex flex-wrap gap-1.5 my-1">
                   {activeItems.map((it) => (
                     <span key={it.id} className="inline-flex items-center gap-1 rounded bg-success/10 border border-success/20 px-2.5 py-1 text-xs text-success font-medium">
@@ -425,7 +430,7 @@ function StageSection({
                     </span>
                   ))}
                   {activeItems.length === 0 && (
-                    <span className="text-xs text-muted-foreground">Nenhuma opção confirmada.</span>
+                    <span className="text-xs text-muted-foreground">Nenhum item marcado.</span>
                   )}
                 </div>
               ) : group.id === "op_equipe" ? (
