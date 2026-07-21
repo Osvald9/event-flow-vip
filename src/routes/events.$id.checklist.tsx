@@ -10,6 +10,7 @@ import {
   Plus,
   X,
   User,
+  Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,6 +19,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Accordion,
   AccordionContent,
@@ -73,6 +81,7 @@ function ChecklistPage() {
   const ev = useEvent(id);
   if (!ev) throw notFound();
 
+  const [isEditingEvent, setIsEditingEvent] = useState(false);
   const items = allItems(ev);
   const rate = completionRate(items);
   const status = eventStatus(ev);
@@ -112,23 +121,39 @@ function ChecklistPage() {
       <Card className="overflow-hidden border-l-4 border-l-brand">
         <CardContent className="p-5">
           <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="truncate font-display text-2xl font-bold text-foreground">
-                {ev.name}
-              </h1>
-              <StatusBadge status={status} />
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="truncate font-display text-2xl font-bold text-foreground">
+                  {ev.name}
+                </h1>
+                <StatusBadge status={status} />
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditingEvent(true)}
+                className="h-8 text-xs bg-card hover:bg-accent"
+              >
+                <Pencil className="mr-1.5 h-3.5 w-3.5" /> Editar informações do evento
+              </Button>
             </div>
-            <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-              <span>{ev.location || "—"}</span>
-              <span>
+            
+            <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4 text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg border border-border">
+              <div><strong>Organizador:</strong> {ev.organizer || "—"}</div>
+              <div><strong>Responsável:</strong> {ev.responsible || "—"}</div>
+              <div><strong>WhatsApp:</strong> {ev.whatsapp || ev.phone || "—"}</div>
+              <div><strong>E-mail:</strong> {ev.email || "—"}</div>
+              <div><strong>Local:</strong> {ev.location || "—"}</div>
+              <div>
+                <strong>Datas:</strong>{" "}
                 {ev.endDate && ev.endDate !== ev.date
                   ? `${ev.date.split("-").reverse().join("/")} a ${ev.endDate.split("-").reverse().join("/")}`
                   : ev.date.split("-").reverse().join("/")}
-              </span>
-              <span>{ev.eventType || "—"}</span>
-              <span>Organizador / Responsável: {ev.organizer || "—"}</span>
+              </div>
+              <div><strong>Tipo:</strong> {ev.eventType || "—"}</div>
+              <div><strong>Público:</strong> {ev.audience ? `${ev.audience} pessoas` : "—"}</div>
             </div>
-            
+
             {ev.mapImage && (
               <div className="mt-3 flex items-start gap-2">
                 <div className="text-xs">
@@ -142,6 +167,12 @@ function ChecklistPage() {
           </div>
         </CardContent>
       </Card>
+
+      <EditEventDialog
+        ev={ev}
+        open={isEditingEvent}
+        onOpenChange={setIsEditingEvent}
+      />
 
       {/* Stages */}
       <div className="mt-4 space-y-3">
@@ -544,5 +575,320 @@ function TeamGroupSection({
         />
       </div>
     </div>
+  );
+}
+
+function EditEventDialog({
+  ev,
+  open,
+  onOpenChange,
+}: {
+  ev: EventInfo;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const [formData, setFormData] = useState({
+    name: ev.name || "",
+    organizer: ev.organizer || "",
+    responsible: ev.responsible || "",
+    phone: ev.phone || "",
+    whatsapp: ev.whatsapp || "",
+    email: ev.email || "",
+    location: ev.location || "",
+    date: ev.date || "",
+    endDate: ev.endDate || "",
+    setupDate: ev.setupDate || "",
+    setupTime: ev.setupTime || "",
+    eventTime: ev.eventTime || "",
+    teardownDate: ev.teardownDate || "",
+    teardownTime: ev.teardownTime || "",
+    audience: ev.audience || "",
+    eventType: ev.eventType || "",
+    mapLink: ev.mapLink || "",
+    mapImage: ev.mapImage || "",
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateEvent(ev.id, formData);
+    toast.success("Informações do evento atualizadas com sucesso!");
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-lg font-bold font-display">Editar informações do evento</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 py-2 text-xs">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <Label htmlFor="edit-name" className="text-xs font-semibold block mb-1">
+                Nome do evento *
+              </Label>
+              <Input
+                id="edit-name"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-organizer" className="text-xs font-semibold block mb-1">
+                Organizador / Empresa
+              </Label>
+              <Input
+                id="edit-organizer"
+                placeholder="Ex: Conexão VIP, Prefeitura..."
+                value={formData.organizer}
+                onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-responsible" className="text-xs font-semibold block mb-1">
+                Responsável / Contato
+              </Label>
+              <Input
+                id="edit-responsible"
+                placeholder="Nome do responsável"
+                value={formData.responsible}
+                onChange={(e) => setFormData({ ...formData, responsible: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-whatsapp" className="text-xs font-semibold block mb-1">
+                WhatsApp
+              </Label>
+              <Input
+                id="edit-whatsapp"
+                placeholder="(48) 99999-9999"
+                value={formData.whatsapp}
+                onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-email" className="text-xs font-semibold block mb-1">
+                E-mail
+              </Label>
+              <Input
+                id="edit-email"
+                type="email"
+                placeholder="contato@evento.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-location" className="text-xs font-semibold block mb-1">
+                Localização / Cidade
+              </Label>
+              <Input
+                id="edit-location"
+                placeholder="Ex: CentroSul - Florianópolis/SC"
+                value={formData.location}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-eventType" className="text-xs font-semibold block mb-1">
+                Tipo de evento
+              </Label>
+              <Input
+                id="edit-eventType"
+                placeholder="Ex: Feira de tecnologia, Exposição..."
+                value={formData.eventType}
+                onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-date" className="text-xs font-semibold block mb-1">
+                Data de Início *
+              </Label>
+              <Input
+                id="edit-date"
+                type="date"
+                required
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-endDate" className="text-xs font-semibold block mb-1">
+                Data de Término
+              </Label>
+              <Input
+                id="edit-endDate"
+                type="date"
+                value={formData.endDate}
+                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-setupDate" className="text-xs font-semibold block mb-1">
+                Data da Montagem
+              </Label>
+              <Input
+                id="edit-setupDate"
+                type="date"
+                value={formData.setupDate}
+                onChange={(e) => setFormData({ ...formData, setupDate: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-setupTime" className="text-xs font-semibold block mb-1">
+                Horário da Montagem
+              </Label>
+              <Input
+                id="edit-setupTime"
+                type="time"
+                value={formData.setupTime}
+                onChange={(e) => setFormData({ ...formData, setupTime: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-eventTime" className="text-xs font-semibold block mb-1">
+                Horário do Evento
+              </Label>
+              <Input
+                id="edit-eventTime"
+                placeholder="Ex: 14:00 às 22:00"
+                value={formData.eventTime}
+                onChange={(e) => setFormData({ ...formData, eventTime: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-teardownDate" className="text-xs font-semibold block mb-1">
+                Data da Desmontagem
+              </Label>
+              <Input
+                id="edit-teardownDate"
+                type="date"
+                value={formData.teardownDate}
+                onChange={(e) => setFormData({ ...formData, teardownDate: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-teardownTime" className="text-xs font-semibold block mb-1">
+                Horário da Desmontagem
+              </Label>
+              <Input
+                id="edit-teardownTime"
+                type="time"
+                value={formData.teardownTime}
+                onChange={(e) => setFormData({ ...formData, teardownTime: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-audience" className="text-xs font-semibold block mb-1">
+                Público estimado
+              </Label>
+              <Input
+                id="edit-audience"
+                placeholder="Ex: 5000"
+                value={formData.audience}
+                onChange={(e) => setFormData({ ...formData, audience: e.target.value })}
+                className="bg-card text-xs"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <Label htmlFor="edit-mapLink" className="text-xs font-semibold block mb-1">
+                Notas de localização do Stand
+              </Label>
+              <Textarea
+                id="edit-mapLink"
+                placeholder="Instruções sobre o local do stand..."
+                value={formData.mapLink}
+                onChange={(e) => setFormData({ ...formData, mapLink: e.target.value })}
+                className="bg-card text-xs"
+                rows={2}
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <Label className="text-xs font-semibold block mb-1">
+                Imagem / Mapa do Stand
+              </Label>
+              <div className="flex items-center gap-3">
+                {formData.mapImage && (
+                  <img src={formData.mapImage} alt="Mapa" className="h-16 w-16 rounded object-cover border border-border" />
+                )}
+                <label className="cursor-pointer inline-flex items-center gap-1.5 rounded border border-input bg-background px-3 py-2 text-xs font-medium shadow-sm hover:bg-accent hover:text-accent-foreground select-none transition-colors">
+                  <Upload className="h-4 w-4" />
+                  <span>{formData.mapImage ? "Alterar foto do mapa" : "Upload foto do mapa"}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          if (event.target?.result) {
+                            setFormData({ ...formData, mapImage: event.target.result as string });
+                            toast.success("Foto do mapa selecionada.");
+                          }
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                </label>
+                {formData.mapImage && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive h-8 px-2 text-xs"
+                    onClick={() => setFormData({ ...formData, mapImage: "" })}
+                  >
+                    Remover imagem
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="pt-4 border-t border-border">
+            <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" size="sm" className="bg-primary text-primary-foreground">
+              Salvar alterações
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
