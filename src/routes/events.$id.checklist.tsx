@@ -26,12 +26,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+
 import {
   Select,
   SelectContent,
@@ -194,104 +189,97 @@ function ChecklistPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <Accordion type="multiple" className="w-full">
+                <div className="space-y-6">
                   {stage.groups.map((group) => {
-                    const gRate = group.id === "comercial_parceria"
-                      ? (ev.partnershipType ? 100 : 0)
-                      : completionRate(group.items);
                     return (
-                      <AccordionItem key={group.id} value={group.id}>
-                        <AccordionTrigger className="hover:no-underline">
-                          <div className="flex flex-1 items-center justify-between gap-3 pr-3">
-                            <span className="text-sm font-medium">{group.title}</span>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          {group.id === "comercial_parceria" ? (
-                            <div className="space-y-4 p-3 bg-muted/20 border border-border rounded-lg">
-                              <div>
-                                <Label className="text-xs font-semibold mb-1.5 block text-foreground">
-                                  Tipo de Parceria
-                                </Label>
-                                <Select
-                                  value={ev.partnershipType || ""}
-                                  onValueChange={(v) => updateEvent(ev.id, { partnershipType: v })}
-                                >
-                                  <SelectTrigger className="w-full bg-card">
-                                    <SelectValue placeholder="Selecione o tipo de parceria" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="Patrocínio Ouro">Patrocínio Ouro</SelectItem>
-                                    <SelectItem value="Patrocínio Prata">Patrocínio Prata</SelectItem>
-                                    <SelectItem value="Patrocínio Bronze">Patrocínio Bronze</SelectItem>
-                                    <SelectItem value="Apoio">Apoio</SelectItem>
-                                    <SelectItem value="Fornecedor Oficial de Internet">Fornecedor Oficial de Internet</SelectItem>
-                                    <SelectItem value="Venda de internet temporária">Venda de internet temporária</SelectItem>
-                                    <SelectItem value="Permuta">Permuta</SelectItem>
-                                    <SelectItem value="Contrato financeiro">Contrato financeiro</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
+                      <div key={group.id} className="space-y-3">
+                        <h3 className="text-sm font-bold text-foreground/90 border-b border-border pb-1.5 uppercase tracking-wider text-xs">
+                          {group.title}
+                        </h3>
+                        {group.id === "comercial_parceria" ? (
+                          <div className="space-y-4 p-3 bg-muted/20 border border-border rounded-lg">
+                            <div>
+                              <Label className="text-xs font-semibold mb-1.5 block text-foreground">
+                                Tipo de Parceria
+                              </Label>
+                              <Select
+                                value={ev.partnershipType || ""}
+                                onValueChange={(v) => updateEvent(ev.id, { partnershipType: v })}
+                              >
+                                <SelectTrigger className="w-full bg-card">
+                                  <SelectValue placeholder="Selecione o tipo de parceria" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Patrocínio Ouro">Patrocínio Ouro</SelectItem>
+                                  <SelectItem value="Patrocínio Prata">Patrocínio Prata</SelectItem>
+                                  <SelectItem value="Patrocínio Bronze">Patrocínio Bronze</SelectItem>
+                                  <SelectItem value="Apoio">Apoio</SelectItem>
+                                  <SelectItem value="Fornecedor Oficial de Internet">Fornecedor Oficial de Internet</SelectItem>
+                                  <SelectItem value="Venda de internet temporária">Venda de internet temporária</SelectItem>
+                                  <SelectItem value="Permuta">Permuta</SelectItem>
+                                  <SelectItem value="Contrato financeiro">Contrato financeiro</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
 
-                              <div>
-                                <Label htmlFor="quotaValue" className="text-xs font-semibold mb-1.5 block text-foreground">
-                                  Valor da cota fechada
-                                </Label>
-                                <Input
-                                  id="quotaValue"
-                                  placeholder="Ex: R$ 15.000,00"
-                                  value={ev.quotaValue || ""}
-                                  onChange={(e) => updateEvent(ev.id, { quotaValue: e.target.value })}
-                                  className="bg-card"
-                                />
-                              </div>
+                            <div>
+                              <Label htmlFor="quotaValue" className="text-xs font-semibold mb-1.5 block text-foreground">
+                                Valor da cota fechada
+                              </Label>
+                              <Input
+                                id="quotaValue"
+                                placeholder="Ex: R$ 15.000,00"
+                                value={ev.quotaValue || ""}
+                                onChange={(e) => updateEvent(ev.id, { quotaValue: e.target.value })}
+                                className="bg-card"
+                              />
                             </div>
-                          ) : group.id === "op_registros" ? (
-                            <RegistrosGroupSection eventId={ev.id} group={group} />
-                          ) : group.id === "op_equipe" ? (
-                            <TeamGroupSection eventId={ev.id} group={group} />
-                          ) : (
-                            <div className="space-y-4 p-3 bg-muted/20 border border-border rounded-lg">
-                              <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                                {group.items.map((it) => {
-                                  const isDone = it.status === "concluido";
-                                  return (
-                                    <label key={it.id} className={`flex items-center gap-2 text-xs p-2 border rounded-lg cursor-pointer hover:bg-muted/50 select-none transition-colors ${
-                                      isDone ? "bg-success/5 border-success/30" : "bg-card border-border"
-                                    }`}>
-                                      <Checkbox
-                                        checked={isDone}
-                                        onCheckedChange={(checked) =>
-                                          updateItem(ev.id, it.id, {
-                                            status: checked ? "concluido" : "pendente",
-                                          })
-                                        }
-                                      />
-                                      <span className={`truncate flex-1 ${isDone ? "font-medium" : ""}`}>{it.label}</span>
-                                    </label>
-                                  );
-                                })}
-                              </div>
-                              <div className="pt-3 border-t border-border">
-                                <Label htmlFor={`notes-${group.id}`} className="text-xs font-semibold mb-1.5 block text-foreground">
-                                  Observações do grupo
-                                </Label>
-                                <Textarea
-                                  id={`notes-${group.id}`}
-                                  placeholder={`Observações gerais sobre ${group.title.toLowerCase()}...`}
-                                  value={group.notes || ""}
-                                  onChange={(e) => updateGroupNotes(ev.id, group.id, e.target.value)}
-                                  className="bg-card text-xs"
-                                  rows={2}
-                                />
-                              </div>
+                          </div>
+                        ) : group.id === "op_registros" ? (
+                          <RegistrosGroupSection eventId={ev.id} group={group} />
+                        ) : group.id === "op_equipe" ? (
+                          <TeamGroupSection eventId={ev.id} group={group} />
+                        ) : (
+                          <div className="space-y-4 p-3 bg-muted/20 border border-border rounded-lg">
+                            <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+                              {group.items.map((it) => {
+                                const isDone = it.status === "concluido";
+                                return (
+                                  <label key={it.id} className={`flex items-center gap-2 text-xs p-2 border rounded-lg cursor-pointer hover:bg-muted/50 select-none transition-colors ${
+                                    isDone ? "bg-success/5 border-success/30" : "bg-card border-border"
+                                  }`}>
+                                    <Checkbox
+                                      checked={isDone}
+                                      onCheckedChange={(checked) =>
+                                        updateItem(ev.id, it.id, {
+                                          status: checked ? "concluido" : "pendente",
+                                        })
+                                      }
+                                    />
+                                    <span className={`truncate flex-1 ${isDone ? "font-medium" : ""}`}>{it.label}</span>
+                                  </label>
+                                );
+                              })}
                             </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
+                            <div className="pt-3 border-t border-border">
+                              <Label htmlFor={`notes-${group.id}`} className="text-xs font-semibold mb-1.5 block text-foreground">
+                                Observações do grupo
+                              </Label>
+                              <Textarea
+                                id={`notes-${group.id}`}
+                                placeholder={`Observações gerais sobre ${group.title.toLowerCase()}...`}
+                                value={group.notes || ""}
+                                onChange={(e) => updateGroupNotes(ev.id, group.id, e.target.value)}
+                                className="bg-card text-xs"
+                                rows={2}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
-                </Accordion>
+                </div>
               </CardContent>
             </Card>
           );
