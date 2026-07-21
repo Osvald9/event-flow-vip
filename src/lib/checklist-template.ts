@@ -1,6 +1,11 @@
-import type { ChecklistStage } from "./types";
+import type { ChecklistStage, ItemStatus } from "./types";
 
-const g = (id: string, title: string, items: Array<string | [string, boolean]>) => ({
+const g = (
+  id: string,
+  title: string,
+  items: Array<string | [string, boolean]>,
+  defaultStatus: ItemStatus = "pendente",
+) => ({
   id,
   title,
   items: items.map((it) => {
@@ -9,7 +14,7 @@ const g = (id: string, title: string, items: Array<string | [string, boolean]>) 
       id: `${id}__${label.toLowerCase().replace(/[^a-z0-9]+/g, "_").slice(0, 60)}`,
       label,
       critical,
-      status: "pendente" as const,
+      status: defaultStatus,
     };
   }),
 });
@@ -30,26 +35,31 @@ export const CHECKLIST_TEMPLATE: ChecklistStage[] = [
         "Permuta",
         ["Contrato financeiro", true],
       ]),
-      g("comercial_contrapartidas", "Contrapartidas negociadas", [
-        "Logo em banner",
-        "Logo em painel",
-        "Logo em telão",
-        "Logo em backdrop",
-        "Logo em ingressos",
-        "Logo em pulseiras",
-        "Logo em credenciais",
-        "Logo no site",
-        "Logo nas redes sociais",
-        "Marcação nas publicações",
-        "Stories",
-        "Reels",
-        "Vídeo institucional",
-        "Citação pelo locutor",
-        "Espaço para ativação",
-        "Espaço para stand",
-        "Espaço para venda",
-        "Exclusividade como internet oficial",
-      ]),
+      g(
+        "comercial_contrapartidas",
+        "Contrapartidas negociadas",
+        [
+          "Logo em banner",
+          "Logo em painel",
+          "Logo em telão",
+          "Logo em backdrop",
+          "Logo em ingressos",
+          "Logo em pulseiras",
+          "Logo em credenciais",
+          "Logo no site",
+          "Logo nas redes sociais",
+          "Marcação nas publicações",
+          "Stories",
+          "Reels",
+          "Vídeo institucional",
+          "Citação pelo locutor",
+          "Espaço para ativação",
+          "Espaço para stand",
+          "Espaço para venda",
+          "Exclusividade como internet oficial",
+        ],
+        "na",
+      ),
     ],
   },
   {

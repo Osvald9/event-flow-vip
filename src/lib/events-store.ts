@@ -327,7 +327,7 @@ export async function updateGroupNotes(eventId: string, groupId: string, notes: 
 export function allItems(ev: EventInfo): ChecklistItem[] {
   return ev.stages.flatMap((s) => 
     s.groups.flatMap((g) => 
-      g.id === "comercial_parceria" ? [] : g.items
+      g.id === "comercial_parceria" || g.id === "comercial_contrapartidas" ? [] : g.items
     )
   );
 }
