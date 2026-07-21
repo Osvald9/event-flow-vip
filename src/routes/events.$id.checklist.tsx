@@ -213,47 +213,24 @@ function ChecklistPage() {
                               <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
                                 {group.items.map((it) => {
                                   const isDone = it.status === "concluido";
-                                  const isNA = it.status === "na";
                                   return (
                                     <div key={it.id} className={`border rounded-lg p-3 bg-card space-y-2.5 flex flex-col justify-between transition-colors ${
-                                      isDone 
-                                        ? "bg-success/5 border-success/30" 
-                                        : isNA 
-                                          ? "bg-muted/40 border-dashed border-border/80 opacity-60" 
-                                          : "border-border"
+                                      isDone ? "bg-success/5 border-success/30" : "border-border"
                                     }`}>
-                                      <div className="flex items-start justify-between gap-2">
-                                        <div className="flex items-start gap-2 min-w-0 flex-1">
-                                          <Checkbox
-                                            id={it.id}
-                                            checked={isDone}
-                                            disabled={isNA}
-                                            onCheckedChange={(checked) =>
-                                              updateItem(ev.id, it.id, {
-                                                status: checked ? "concluido" : "pendente",
-                                              })
-                                            }
-                                            className="mt-0.5"
-                                          />
-                                          <Label htmlFor={it.id} className={`text-xs font-semibold leading-tight cursor-pointer break-words flex-1 ${isNA ? "line-through text-muted-foreground" : ""}`}>
-                                            {it.label}
-                                          </Label>
-                                        </div>
-                                        <button
-                                          type="button"
-                                          onClick={() => {
+                                      <div className="flex items-start gap-2 min-w-0">
+                                        <Checkbox
+                                          id={it.id}
+                                          checked={isDone}
+                                          onCheckedChange={(checked) =>
                                             updateItem(ev.id, it.id, {
-                                              status: isNA ? "pendente" : "na"
-                                            });
-                                          }}
-                                          className={`px-1.5 py-0.5 rounded text-[10px] font-semibold transition-colors shrink-0 ${
-                                            isNA 
-                                              ? "bg-muted text-muted-foreground border border-border" 
-                                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                          }`}
-                                        >
-                                          N/A
-                                        </button>
+                                              status: checked ? "concluido" : "pendente",
+                                            })
+                                          }
+                                          className="mt-0.5"
+                                        />
+                                        <Label htmlFor={it.id} className="text-xs font-semibold leading-tight cursor-pointer break-words flex-1">
+                                          {it.label}
+                                        </Label>
                                       </div>
                                       <div className="pt-1">
                                         {it.attachment ? (
@@ -269,14 +246,13 @@ function ChecklistPage() {
                                           </div>
                                         ) : (
                                           <div>
-                                            <label className={`cursor-pointer inline-flex w-full items-center justify-center gap-1.5 rounded border border-input bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm hover:bg-accent hover:text-accent-foreground select-none transition-colors ${isNA ? "opacity-50 pointer-events-none" : ""}`}>
+                                            <label className="cursor-pointer inline-flex w-full items-center justify-center gap-1.5 rounded border border-input bg-background px-2.5 py-1.5 text-xs font-medium shadow-sm hover:bg-accent hover:text-accent-foreground select-none transition-colors">
                                               <Upload className="h-3.5 w-3.5" />
                                               <span>Enviar foto</span>
                                               <input
                                                 type="file"
                                                 accept="image/*"
                                                 className="hidden"
-                                                disabled={isNA}
                                                 onChange={(e) => {
                                                   const file = e.target.files?.[0];
                                                   if (file) {
@@ -321,44 +297,20 @@ function ChecklistPage() {
                               <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                                 {group.items.map((it) => {
                                   const isDone = it.status === "concluido";
-                                  const isNA = it.status === "na";
                                   return (
-                                    <div key={it.id} className={`flex items-center justify-between gap-2 text-xs p-2 border rounded-lg transition-colors ${
-                                      isDone 
-                                        ? "bg-success/5 border-success/30" 
-                                        : isNA 
-                                          ? "bg-muted/40 border-dashed border-border/80 opacity-60" 
-                                          : "bg-card border-border hover:bg-muted/50"
+                                    <label key={it.id} className={`flex items-center gap-2 text-xs p-2 border rounded-lg cursor-pointer hover:bg-muted/50 select-none transition-colors ${
+                                      isDone ? "bg-success/5 border-success/30" : "bg-card border-border"
                                     }`}>
-                                      <label className="flex items-center gap-2 cursor-pointer flex-1 min-w-0 select-none">
-                                        <Checkbox
-                                          checked={isDone}
-                                          disabled={isNA}
-                                          onCheckedChange={(checked) =>
-                                            updateItem(ev.id, it.id, {
-                                              status: checked ? "concluido" : "pendente",
-                                            })
-                                          }
-                                        />
-                                        <span className={`truncate flex-1 ${isNA ? "line-through text-muted-foreground" : isDone ? "font-medium" : ""}`}>{it.label}</span>
-                                      </label>
-                                      
-                                      <button
-                                        type="button"
-                                        onClick={() => {
+                                      <Checkbox
+                                        checked={isDone}
+                                        onCheckedChange={(checked) =>
                                           updateItem(ev.id, it.id, {
-                                            status: isNA ? "pendente" : "na"
-                                          });
-                                        }}
-                                        className={`px-1.5 py-0.5 rounded text-[10px] font-semibold transition-colors shrink-0 ${
-                                          isNA 
-                                            ? "bg-muted text-muted-foreground border border-border" 
-                                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                        }`}
-                                      >
-                                        N/A
-                                      </button>
-                                    </div>
+                                            status: checked ? "concluido" : "pendente",
+                                          })
+                                        }
+                                      />
+                                      <span className={`truncate flex-1 ${isDone ? "font-medium" : ""}`}>{it.label}</span>
+                                    </label>
                                   );
                                 })}
                               </div>
