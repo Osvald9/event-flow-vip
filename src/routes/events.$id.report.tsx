@@ -396,17 +396,17 @@ function StageSection({
             group.id === "op_stand" || 
             group.id === "op_materiais";
 
-          const activeItems = isSelectionGroup
-            ? group.items.filter((i) => i.status === "concluido")
-            : group.items.filter((i) => i.status !== "na");
+          const completedItems = group.items.filter((i) => i.status === "concluido");
 
           if (group.id === "op_registros" && group.items.filter((i) => i.attachment).length === 0 && !group.notes) {
             return null;
           }
-          if (isSelectionGroup && activeItems.length === 0 && !group.notes) {
+          if (group.id === "op_equipe" && group.items.length === 0 && !group.notes) {
             return null;
           }
-          if (!isSelectionGroup && group.id !== "op_registros" && activeItems.length === 0) return null;
+          if (group.id !== "op_registros" && group.id !== "op_equipe" && completedItems.length === 0 && !group.notes) {
+            return null;
+          }
 
           return (
             <div key={group.id} className="rounded-lg border border-border p-3 space-y-2 bg-muted/10">
@@ -424,12 +424,12 @@ function StageSection({
                 </div>
               ) : isSelectionGroup ? (
                 <div className="flex flex-wrap gap-1.5 my-1">
-                  {activeItems.map((it) => (
+                  {completedItems.map((it) => (
                     <span key={it.id} className="inline-flex items-center gap-1 rounded bg-success/10 border border-success/20 px-2.5 py-1 text-xs text-success font-medium">
                       ✓ {it.label}
                     </span>
                   ))}
-                  {activeItems.length === 0 && (
+                  {completedItems.length === 0 && (
                     <span className="text-xs text-muted-foreground">Nenhum item marcado.</span>
                   )}
                 </div>
@@ -445,16 +445,13 @@ function StageSection({
                   )}
                 </div>
               ) : (
-                <ul className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                  {activeItems.map((it) => (
-                    <li key={it.id} className="flex items-center gap-2 text-xs p-1.5 border border-border/60 rounded bg-card select-none">
-                      <span className={it.status === "concluido" ? "text-success font-semibold" : "text-muted-foreground"}>
-                        {it.status === "concluido" ? "✓" : "○"}
-                      </span>
-                      <span className="truncate flex-1">{it.label}</span>
-                    </li>
+                <div className="flex flex-wrap gap-1.5 my-1">
+                  {completedItems.map((it) => (
+                    <span key={it.id} className="inline-flex items-center gap-1 rounded bg-success/10 border border-success/20 px-2.5 py-1 text-xs text-success font-medium">
+                      ✓ {it.label}
+                    </span>
                   ))}
-                </ul>
+                </div>
               )}
               {group.notes && (
                 <div className="mt-2 rounded border border-border/80 bg-muted/40 p-2 text-[11px] text-muted-foreground">
